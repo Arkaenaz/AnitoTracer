@@ -8,10 +8,16 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{6ae95f07-24da-4c08-8ffc-614ce20e891a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Debug">
+      <UniqueIdentifier>{240ecacf-a684-49ab-9160-a8eefecc3f00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClInclude Include="Logger.h">
+      <Filter>Engine\Debug</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
