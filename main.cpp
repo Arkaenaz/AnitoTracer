@@ -1,6 +1,13 @@
-#include <iostream>
+#include "EditorWindow.h"
 
 int main()
 {
-    std::cout << "Welcome to Anito Tracer!\n";
+	Anito::EditorWindow* editorWindow = new Anito::EditorWindow();
+
+	while (editorWindow->running())
+	{
+		editorWindow->broadcast();
+	}
+
+	return 0;
 }
