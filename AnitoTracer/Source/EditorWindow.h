@@ -2,6 +2,8 @@
 
 #include "Window.h"
 
+#include "SwapChain.h"
+
 namespace Anito
 {
 	class EditorWindow : public Window
@@ -12,5 +14,10 @@ namespace Anito
 		virtual void onDestroy() override;
 		virtual void onFocus() override;
 		virtual void onKillFocus() override;
+
+		void initializeEngine();
+
+	private:
+		SwapChain* swapChain;
 	};
 }

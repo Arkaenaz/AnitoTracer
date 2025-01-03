@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{d521f25d-6610-4d06-b4ea-46ab9f5ca12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{0154c1d2-50c7-442b-974c-64b2f26529b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\Engine\Debug">
+      <UniqueIdentifier>{ec7d7849-3f53-4633-93b3-a5ad4cfcbb95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\GraphicsEngine">
+      <UniqueIdentifier>{39718793-c1a7-4e9d-80d4-26be988d6652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem">
+      <UniqueIdentifier>{27081f42-7f43-4d0e-afa8-d832f66921ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem\DeviceContext">
+      <UniqueIdentifier>{dc2ebceb-fe3b-414c-bc82-e752e96fdd09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\WindowSystem">
+      <UniqueIdentifier>{4a601a48-a4c8-40fa-a335-cdeed27ad8e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Support">
+      <UniqueIdentifier>{eceb0b65-6126-455d-9cd1-dadc4865539b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Application">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem\SwapChain">
+      <UniqueIdentifier>{beabf58b-928c-4f45-a77b-b1fd912d3c68}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\EditorWindow.cpp">
+      <Filter>Source\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DebugLayer.cpp">
+      <Filter>Source\Engine\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RenderSystem.cpp">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeviceContext.cpp">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GraphicsEngine.cpp">
+      <Filter>Source\Engine\GraphicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window.cpp">
+      <Filter>Source\Engine\WindowSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SwapChain.cpp">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\EditorWindow.h">
+      <Filter>Source\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DebugLayer.h">
+      <Filter>Source\Engine\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Logger.h">
+      <Filter>Source\Engine\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RenderSystem.h">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DeviceContext.h">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GraphicsEngine.h">
+      <Filter>Source\Engine\GraphicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Window.h">
+      <Filter>Source\Engine\WindowSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WinInclude.h">
+      <Filter>Source\Engine\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SwapChain.h">
+      <Filter>Source\Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\AnitoTracer.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
