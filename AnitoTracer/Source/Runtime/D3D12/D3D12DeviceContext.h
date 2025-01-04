@@ -12,12 +12,13 @@ namespace Anito
 		D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device10* device);
 		~D3D12DeviceContext();
 
-		void signalAndWait();
+		void signalAndWaitForGpu(UINT frameIndex);
+		void moveToNextFrame(D3D12SwapChain* swapChain);
 
-		ID3D12GraphicsCommandList10* initCommandList();
+		ID3D12GraphicsCommandList10* initCommandList(UINT frameIndex);
 		void executeCommandList();
 
-		void clearRenderTargetColor(const D3D12SwapChain* swapChain, float red, float green, float blue, float alpha);
+		void clearRenderTargetColor(D3D12SwapChain* swapChain, float red, float green, float blue, float alpha);
 
 		ID3D12CommandQueue* getCommandQueue();
 
@@ -25,11 +26,11 @@ namespace Anito
 		D3D12RenderSystem* system;
 		ID3D12CommandQueue* cmdQueue;
 
-		ID3D12CommandAllocator* cmdAllocator;
+		ID3D12CommandAllocator* cmdAllocators[2];
 		ID3D12GraphicsCommandList10* cmdList;
 
 		ID3D12Fence1* fence;
-		UINT64 fenceValue = 0;
+		UINT64 fenceValues[2];
 		HANDLE fenceEvent = nullptr;
 	};
 }

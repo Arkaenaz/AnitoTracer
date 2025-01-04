@@ -5,7 +5,8 @@
 
 namespace Anito
 {
-	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) : system(system)
+	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) :
+		system(system), frameIndex(0), rtvDescriptorSize(0)
 	{
 		ID3D12Device10* device = this->system->getDXDevice();
 		D3D12DeviceContext* deviceContext = this->system->getImmediateDeviceContext();
@@ -114,7 +115,21 @@ namespace Anito
 	bool D3D12SwapChain::present(bool vsync)
 	{
 		this->swapChain->Present(vsync, NULL);
-		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 		return true;
+	}
+
+	void D3D12SwapChain::updateFrameIndex()
+	{
+		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
+	}
+
+	UINT D3D12SwapChain::getFrameIndex()
+	{
+		return this->frameIndex;
+	}
+
+	UINT D3D12SwapChain::getRTVDescriptorSize()
+	{
+		return this->rtvDescriptorSize;
 	}
 }

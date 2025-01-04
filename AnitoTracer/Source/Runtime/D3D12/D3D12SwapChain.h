@@ -16,6 +16,10 @@ namespace Anito
 		void createRenderTarget();
 		bool present(bool vsync);
 
+		void updateFrameIndex();
+		UINT getFrameIndex();
+		UINT getRTVDescriptorSize();
+
 	private:
 		static const UINT FrameCount = 2;
 

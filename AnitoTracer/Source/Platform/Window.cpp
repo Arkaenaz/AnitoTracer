@@ -109,6 +109,7 @@ namespace Anito {
 		}
 
 		this->onUpdate();
+		this->onRender();
 
 		MSG msg;
 		while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
@@ -143,6 +144,10 @@ namespace Anito {
 	void Window::onUpdate()
 	{
 
+	}
+
+	void Window::onRender()
+	{
 	}
 
 	void Window::onDestroy()

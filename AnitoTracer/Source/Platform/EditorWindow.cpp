@@ -18,14 +18,22 @@ namespace Anito
 	void EditorWindow::onUpdate()
 	{
 		Window::onUpdate();
+	}
+
+	void EditorWindow::onRender()
+	{
+		Window::onUpdate();
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
-		auto* cmdList = renderSystem->getImmediateDeviceContext()->initCommandList();
+		auto* cmdList = renderSystem->getImmediateDeviceContext()->initCommandList(this->swapChain->getFrameIndex());
 
 		renderSystem->getImmediateDeviceContext()->clearRenderTargetColor(this->swapChain, 1, 0, 0, 1);
 
 		renderSystem->getImmediateDeviceContext()->executeCommandList();
+
 		this->swapChain->present(false);
+
+		renderSystem->getImmediateDeviceContext()->moveToNextFrame(this->swapChain);
 	}
 
 	void EditorWindow::onDestroy()
