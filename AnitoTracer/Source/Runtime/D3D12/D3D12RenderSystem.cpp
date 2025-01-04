@@ -19,7 +19,7 @@ namespace Anito
 		return this->dxgiFactory;
 	}
 
-	ID3D12Device14* D3D12RenderSystem::getDXDevice()
+	ID3D12Device10* D3D12RenderSystem::getDXDevice()
 	{
 		return this->device;
 	}
@@ -81,7 +81,7 @@ namespace Anito
 			}
 		}
 
-		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device10), (void**)&this->device);
+		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&this->device));
 		Logger::logHResult(this, hr);
 		if (FAILED(hr))
 		{

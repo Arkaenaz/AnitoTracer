@@ -8,7 +8,7 @@ namespace Anito
 {
 	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) : system(system)
 	{
-		ID3D12Device14* device = this->system->getDXDevice();
+		ID3D12Device10* device = this->system->getDXDevice();
 		D3D12DeviceContext* deviceContext = this->system->getImmediateDeviceContext();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};

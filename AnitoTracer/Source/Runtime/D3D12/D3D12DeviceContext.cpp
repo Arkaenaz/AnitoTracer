@@ -4,7 +4,7 @@
 
 namespace Anito
 {
-	D3D12DeviceContext::D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device14* device) : system(system), d3d12device(device)
+	D3D12DeviceContext::D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device10* device) : system(system), d3d12device(device)
 	{
 		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
 		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;

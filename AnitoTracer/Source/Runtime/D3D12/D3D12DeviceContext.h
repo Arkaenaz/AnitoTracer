@@ -9,7 +9,7 @@ namespace Anito
 	class D3D12DeviceContext
 	{
 	public:
-		D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device14* device);
+		D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device10* device);
 		~D3D12DeviceContext();
 
 		void signalAndWait();
@@ -23,7 +23,7 @@ namespace Anito
 
 	private:
 		D3D12RenderSystem* system;
-		ID3D12Device14* d3d12device;
+		ID3D12Device10* d3d12device;
 		ID3D12CommandQueue* cmdQueue;
 
 		ID3D12CommandAllocator* cmdAllocator;
