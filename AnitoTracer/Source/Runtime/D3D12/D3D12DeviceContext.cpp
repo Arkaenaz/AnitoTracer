@@ -3,7 +3,7 @@
 
 namespace Anito
 {
-	D3D12DeviceContext::D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device10* device) : system(system), d3d12device(device)
+	D3D12DeviceContext::D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device10* device) : system(system)
 	{
 		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
 		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -11,13 +11,13 @@ namespace Anito
 		cmdQueueDesc.NodeMask = 0;
 		cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-		if (SUCCEEDED(this->d3d12device->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&this->cmdQueue))))
+		if (SUCCEEDED(device->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&this->cmdQueue))))
 		{
 			Logger::debug(this, "Command Queue created successfully");
 		}
 
 
-		if (SUCCEEDED(this->d3d12device->CreateFence(this->fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
+		if (SUCCEEDED(device->CreateFence(this->fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
 		{
 			Logger::debug(this, "Fence created successfully");
 		}
@@ -28,12 +28,12 @@ namespace Anito
 			Logger::debug(this, "Fence Event created successfully");
 		}
 
-		if (SUCCEEDED(this->d3d12device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->cmdAllocator))))
+		if (SUCCEEDED(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->cmdAllocator))))
 		{
 			Logger::debug(this, "Command Allocator created successfully");
 		}
 
-		if (SUCCEEDED(this->d3d12device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, _uuidof(ID3D12GraphicsCommandList7), (void**)&this->cmdList)))
+		if (SUCCEEDED(device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, _uuidof(ID3D12GraphicsCommandList7), (void**)&this->cmdList)))
 		{
 			Logger::debug(this, "Command List created successfully");
 		}

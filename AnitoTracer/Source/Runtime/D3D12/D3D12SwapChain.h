@@ -12,7 +12,7 @@ namespace Anito
 		~D3D12SwapChain();
 
 		void cleanRenderTarget();
-		void resizeBuffers(UINT bufferCount, UINT width, UINT height);
+		void resizeBuffers( UINT width, UINT height);
 		void createRenderTarget();
 		bool present(bool vsync);
 
@@ -23,6 +23,7 @@ namespace Anito
 
 		D3D12RenderSystem* system = nullptr;
 
+		UINT frameIndex;
 		IDXGISwapChain4* swapChain;
 		ID3D12DescriptorHeap* renderTargetViewHeap;
 		UINT rtvDescriptorSize;

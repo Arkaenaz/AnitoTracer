@@ -23,7 +23,6 @@ namespace Anito
 
 	private:
 		D3D12RenderSystem* system;
-		ID3D12Device10* d3d12device;
 		ID3D12CommandQueue* cmdQueue;
 
 		ID3D12CommandAllocator* cmdAllocator;

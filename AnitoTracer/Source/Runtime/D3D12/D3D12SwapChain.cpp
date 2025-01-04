@@ -40,6 +40,8 @@ namespace Anito
 		}
 
 		this->swapChain = static_cast<IDXGISwapChain4*>(swapChain);
+		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
+
 
 		{
 			// Describe and create a render target view (RTV) descriptor heap.
@@ -61,13 +63,14 @@ namespace Anito
 		}
 
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart());
+			CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart());
 
 			// Create a RTV for each frame.
 			for (UINT n = 0; n < FrameCount; n++)
 			{
 				this->swapChain->GetBuffer(n, IID_PPV_ARGS(&this->renderTargets[n]));
 				device->CreateRenderTargetView(this->renderTargets[n], nullptr, rtvHandle);
+				rtvHandle.Offset(1, this->rtvDescriptorSize);
 			}
 		}
 	}
@@ -86,8 +89,9 @@ namespace Anito
 		}
 	}
 
-	void D3D12SwapChain::resizeBuffers(UINT bufferCount, UINT width, UINT height)
+	void D3D12SwapChain::resizeBuffers(UINT width, UINT height)
 	{
+		this->swapChain->ResizeBuffers(FrameCount, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		//m_renderTexture->resizeResources(width, height);
 		//m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 	}
@@ -110,6 +114,7 @@ namespace Anito
 	bool D3D12SwapChain::present(bool vsync)
 	{
 		this->swapChain->Present(vsync, NULL);
+		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 		return true;
 	}
 }
