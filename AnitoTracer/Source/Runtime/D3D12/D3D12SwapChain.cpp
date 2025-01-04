@@ -78,6 +78,9 @@ namespace Anito
 
 	D3D12SwapChain::~D3D12SwapChain()
 	{
+		this->renderTargets[1]->Release();
+		this->renderTargets[0]->Release();
+		this->renderTargetViewHeap->Release();
 		this->swapChain->Release();
 	}
 

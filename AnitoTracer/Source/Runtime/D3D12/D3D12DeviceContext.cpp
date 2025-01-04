@@ -45,12 +45,13 @@ namespace Anito
 	D3D12DeviceContext::~D3D12DeviceContext()
 	{
 		this->cmdList->Release();
-		this->cmdAllocators[0]->Release();
 		this->cmdAllocators[1]->Release();
+		this->cmdAllocators[0]->Release();
 		if (this->fenceEvent)
 		{
 			CloseHandle(this->fenceEvent);
 		}
+		this->fence->Release();
 		this->cmdQueue->Release();
 	}
 

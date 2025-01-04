@@ -119,6 +119,7 @@ namespace Anito
 
 	D3D12RenderSystem::~D3D12RenderSystem()
 	{
+		delete this->deviceContext;
 		this->device->Release();
 
 		//this->dxgiDevice->Release();

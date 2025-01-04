@@ -54,6 +54,8 @@ namespace Anito
 	void EditorWindow::onDestroy()
 	{
 		Window::onDestroy();
+
+		delete this->swapChain;
 		D3D12RenderSystem::destroy();
 		D3D12DebugLayer::destroy();
 	}
