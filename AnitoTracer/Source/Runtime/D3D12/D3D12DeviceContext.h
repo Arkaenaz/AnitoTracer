@@ -1,25 +1,28 @@
 #pragma once
 
-#include "RenderSystem.h"
+#include "D3D12RenderSystem.h"
 
 namespace Anito
 {
-	class RenderSystem;
-	class DeviceContext
+	class D3D12RenderSystem;
+	class D3D12SwapChain;
+	class D3D12DeviceContext
 	{
 	public:
-		DeviceContext(RenderSystem* system, ID3D12Device14* device);
-		~DeviceContext();
+		D3D12DeviceContext(D3D12RenderSystem* system, ID3D12Device14* device);
+		~D3D12DeviceContext();
 
 		void signalAndWait();
 
 		ID3D12GraphicsCommandList10* initCommandList();
 		void executeCommandList();
 
+		void clearRenderTargetColor(const D3D12SwapChain* swapChain, float red, float green, float blue, float alpha);
+
 		ID3D12CommandQueue* getCommandQueue();
 
 	private:
-		RenderSystem* system;
+		D3D12RenderSystem* system;
 		ID3D12Device14* d3d12device;
 		ID3D12CommandQueue* cmdQueue;
 

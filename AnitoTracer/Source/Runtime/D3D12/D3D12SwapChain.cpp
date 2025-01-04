@@ -1,14 +1,15 @@
-#include "SwapChain.h"
+#include "D3D12SwapChain.h"
 
-#include "RenderSystem.h"
-#include "Logger.h"
+#include "D3D12RenderSystem.h"
+
+#include "Common/Logger.h"
 
 namespace Anito
 {
-	SwapChain::SwapChain(RenderSystem* system, HWND hwnd, UINT width, UINT height) : system(system)
+	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) : system(system)
 	{
 		ID3D12Device14* device = this->system->getDXDevice();
-		DeviceContext* deviceContext = this->system->getImmediateDeviceContext();
+		D3D12DeviceContext* deviceContext = this->system->getImmediateDeviceContext();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -19,7 +20,7 @@ namespace Anito
 		swapChainDesc.SampleDesc.Count = 1;
 		swapChainDesc.SampleDesc.Quality = 0;
 		swapChainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.BufferCount = 2;
+		swapChainDesc.BufferCount = FrameCount;
 		swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
@@ -30,7 +31,7 @@ namespace Anito
 		HRESULT hr = this->system->dxgiFactory->CreateSwapChainForHwnd(deviceContext->getCommandQueue(), 
 			hwnd, &swapChainDesc, nullptr, nullptr, &swapChain);
 
-		if (Logger::debug(this, hr))
+		if (SUCCEEDED(hr))
 		{
 			Logger::debug(this, "SwapChain created successfully");
 		}
@@ -44,11 +45,11 @@ namespace Anito
 		{
 			// Describe and create a render target view (RTV) descriptor heap.
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-			rtvHeapDesc.NumDescriptors = 2;
+			rtvHeapDesc.NumDescriptors = FrameCount;
 			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-			if (Logger::debug(this, device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap))))
+			if (SUCCEEDED(device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap))))
 			{
 				Logger::debug(this, "Render Target View created successfully");
 			}
@@ -59,14 +60,25 @@ namespace Anito
 
 			this->rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		}
+
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart());
+
+			// Create a RTV for each frame.
+			for (UINT n = 0; n < FrameCount; n++)
+			{
+				this->swapChain->GetBuffer(n, IID_PPV_ARGS(&this->renderTargets[n]));
+				device->CreateRenderTargetView(this->renderTargets[n], nullptr, rtvHandle);
+			}
+		}
 	}
 
-	SwapChain::~SwapChain()
+	D3D12SwapChain::~D3D12SwapChain()
 	{
 		this->swapChain->Release();
 	}
 
-	void SwapChain::cleanRenderTarget()
+	void D3D12SwapChain::cleanRenderTarget()
 	{
 		if (this->renderTargetViewHeap)
 		{
@@ -75,13 +87,13 @@ namespace Anito
 		}
 	}
 
-	void SwapChain::resizeBuffers(UINT bufferCount, UINT width, UINT height)
+	void D3D12SwapChain::resizeBuffers(UINT bufferCount, UINT width, UINT height)
 	{
 		//m_renderTexture->resizeResources(width, height);
 		//m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
 	}
 
-	void SwapChain::createRenderTarget()
+	void D3D12SwapChain::createRenderTarget()
 	{
 		/*ID3D11Texture2D* buffer = NULL;
 		HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
@@ -96,7 +108,7 @@ namespace Anito
 		buffer->Release();*/
 	}
 
-	bool SwapChain::present(bool vsync)
+	bool D3D12SwapChain::present(bool vsync)
 	{
 		this->swapChain->Present(vsync, NULL);
 		return true;

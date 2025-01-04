@@ -1,6 +1,6 @@
 #include "Window.h"
 
-#include "Logger.h"
+#include "Common/Logger.h"
 
 LRESULT CALLBACK WndProc(HWND windowHandle, UINT msg, WPARAM wParam, LPARAM lParam)
 {

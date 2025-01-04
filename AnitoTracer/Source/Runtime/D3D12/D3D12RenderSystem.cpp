@@ -1,32 +1,55 @@
-#include "RenderSystem.h"
+#include "D3D12RenderSystem.h"
 
-#include "Logger.h"
+#include "Common/Logger.h"
+
 namespace Anito
 {
-	SwapChain* RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
+	D3D12SwapChain* D3D12RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 	{
-		return new SwapChain(this, hwnd, width, height);
+		return new D3D12SwapChain(this, hwnd, width, height);
 	}
 
-	DeviceContext* RenderSystem::getImmediateDeviceContext()
+	D3D12DeviceContext* D3D12RenderSystem::getImmediateDeviceContext()
 	{
 		return this->immediateDeviceContext;
 	}
 
-	IDXGIFactory7* RenderSystem::getDXFactory()
+	IDXGIFactory7* D3D12RenderSystem::getDXFactory()
 	{
 		return this->dxgiFactory;
 	}
 
-	ID3D12Device14* RenderSystem::getDXDevice()
+	ID3D12Device14* D3D12RenderSystem::getDXDevice()
 	{
-		return this->d3d12Device;
+		return this->device;
 	}
 
-	RenderSystem::RenderSystem()
+	D3D12RenderSystem* D3D12RenderSystem::getInstance()
+	{
+		return P_SHARED_INSTANCE;
+	}
+
+	bool D3D12RenderSystem::initialize()
+	{
+		if (P_SHARED_INSTANCE)
+		{
+			Logger::debug("D3D12 Render System already created");
+			return false;
+		}
+		P_SHARED_INSTANCE = new D3D12RenderSystem();
+	}
+
+	void D3D12RenderSystem::destroy()
+	{
+		delete P_SHARED_INSTANCE;
+	}
+
+	D3D12RenderSystem* D3D12RenderSystem::P_SHARED_INSTANCE = nullptr;
+	D3D12RenderSystem::D3D12RenderSystem()
 	{
 		HRESULT hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&this->dxgiFactory));
-		if (!Logger::debug(this, hr))
+		Logger::logHResult(this, hr);
+		if (FAILED(hr))
 		{
 			Logger::error(this, "DXGIFactory not created successfully");
 		}
@@ -58,9 +81,9 @@ namespace Anito
 			}
 		}
 
-		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device10), (void**)&this->d3d12Device);
-
-		if (!Logger::debug(this, hr))
+		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device10), (void**)&this->device);
+		Logger::logHResult(this, hr);
+		if (FAILED(hr))
 		{
 			Logger::error(this, "Device not created successfully");
 		}
@@ -80,27 +103,29 @@ namespace Anito
 		};
 
 		this->featureLevel = D3D_FEATURE_LEVEL_11_0;
-		hr = this->d3d12Device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS,
+		hr = this->device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS,
 			&featLevels, sizeof(featLevels));
+
 		if (SUCCEEDED(hr))
 		{
 			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
 		}
 
-		this->immediateDeviceContext = new DeviceContext(this, this->d3d12Device);
+		this->immediateDeviceContext = new D3D12DeviceContext(this, this->device);
 
-		//this->d3d12Device->QueryInterface(IID_PPV_ARGS(&this->dxgiDevice));
+		//this->device->QueryInterface(IID_PPV_ARGS(&this->dxgiDevice));
 
 		Logger::debug(this, "Initialized");
 	}
 
-	RenderSystem::~RenderSystem()
+	D3D12RenderSystem::~D3D12RenderSystem()
 	{
-		this->d3d12Device->Release();
+		this->device->Release();
 
 		//this->dxgiDevice->Release();
 		this->dxgiAdapter->Release();
 		this->dxgiFactory->Release();
 	};
+	D3D12RenderSystem::D3D12RenderSystem(const D3D12RenderSystem&) {}
 }
 

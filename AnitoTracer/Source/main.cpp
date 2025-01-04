@@ -1,4 +1,4 @@
-#include "EditorWindow.h"
+#include "Platform/EditorWindow.h"
 
 int main()
 {

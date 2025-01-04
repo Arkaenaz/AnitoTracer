@@ -14,15 +14,6 @@
     <Filter Include="Source\Engine\Debug">
       <UniqueIdentifier>{ec7d7849-3f53-4633-93b3-a5ad4cfcbb95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\GraphicsEngine">
-      <UniqueIdentifier>{39718793-c1a7-4e9d-80d4-26be988d6652}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem">
-      <UniqueIdentifier>{27081f42-7f43-4d0e-afa8-d832f66921ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem\DeviceContext">
-      <UniqueIdentifier>{dc2ebceb-fe3b-414c-bc82-e752e96fdd09}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\WindowSystem">
       <UniqueIdentifier>{4a601a48-a4c8-40fa-a335-cdeed27ad8e9}</UniqueIdentifier>
     </Filter>
@@ -33,56 +24,59 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source\Engine\GraphicsEngine\RenderSystem\SwapChain">
+    <Filter Include="Source\Engine\D3D12">
+      <UniqueIdentifier>{39718793-c1a7-4e9d-80d4-26be988d6652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem">
+      <UniqueIdentifier>{27081f42-7f43-4d0e-afa8-d832f66921ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\DeviceContext">
+      <UniqueIdentifier>{dc2ebceb-fe3b-414c-bc82-e752e96fdd09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\SwapChain">
       <UniqueIdentifier>{beabf58b-928c-4f45-a77b-b1fd912d3c68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\DebugLayer">
+      <UniqueIdentifier>{a09ef97b-fe8b-4973-829a-4295009d02a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EditorWindow.cpp">
+    <ClCompile Include="Source\Platform\EditorWindow.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
       <Filter>Source\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DebugLayer.cpp">
-      <Filter>Source\Engine\Debug</Filter>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12RenderSystem.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RenderSystem.cpp">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem</Filter>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12DeviceContext.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\DeviceContext</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DeviceContext.cpp">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GraphicsEngine.cpp">
-      <Filter>Source\Engine\GraphicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Window.cpp">
+    <ClCompile Include="Source\Platform\Window.cpp">
       <Filter>Source\Engine\WindowSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SwapChain.cpp">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12SwapChain.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12DebugLayer.cpp">
+      <Filter>Source\Engine\D3D12\DebugLayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\EditorWindow.h">
+    <ClInclude Include="Source\Platform\EditorWindow.h">
       <Filter>Source\Application</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DebugLayer.h">
+    <ClInclude Include="Source\Common\Logger.h">
       <Filter>Source\Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Logger.h">
-      <Filter>Source\Engine\Debug</Filter>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12RenderSystem.h">
+      <Filter>Source\Engine\D3D12\RenderSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Source\RenderSystem.h">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem</Filter>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12DeviceContext.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\DeviceContext</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DeviceContext.h">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem\DeviceContext</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GraphicsEngine.h">
-      <Filter>Source\Engine\GraphicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Window.h">
+    <ClInclude Include="Source\Platform\Window.h">
       <Filter>Source\Engine\WindowSystem</Filter>
     </ClInclude>
     <ClInclude Include="Source\WinInclude.h">
@@ -91,8 +85,14 @@
     <ClInclude Include="Resources\resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SwapChain.h">
-      <Filter>Source\Engine\GraphicsEngine\RenderSystem\SwapChain</Filter>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12SwapChain.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12DebugLayer.h">
+      <Filter>Source\Engine\D3D12\DebugLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Common\Time.h">
+      <Filter>Source\Engine\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

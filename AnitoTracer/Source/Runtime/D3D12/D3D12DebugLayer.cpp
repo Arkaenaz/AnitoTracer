@@ -1,38 +1,38 @@
-#include "DebugLayer.h"
+#include "D3D12DebugLayer.h"
 
-#include "Logger.h"
+#include "Common/Logger.h"
 
 namespace Anito
 {
-	DebugLayer* DebugLayer::getInstance()
+	D3D12DebugLayer* D3D12DebugLayer::getInstance()
 	{
 		return P_SHARED_INSTANCE;
 	}
-	void DebugLayer::initialize()
+	void D3D12DebugLayer::initialize()
 	{
 		if (P_SHARED_INSTANCE)
 		{
 			Logger::debug("Debug Layer already created");
 		}
-		P_SHARED_INSTANCE = new DebugLayer();
+		P_SHARED_INSTANCE = new D3D12DebugLayer();
 	}
-	void DebugLayer::destroy()
+	void D3D12DebugLayer::destroy()
 	{
 		delete P_SHARED_INSTANCE;
 	}
 
-	DebugLayer* DebugLayer::P_SHARED_INSTANCE = nullptr;
-	DebugLayer::DebugLayer()
+	D3D12DebugLayer* D3D12DebugLayer::P_SHARED_INSTANCE = nullptr;
+	D3D12DebugLayer::D3D12DebugLayer()
 	{
 #ifdef _DEBUG
 		// Initialize D3D12 Debug Layer
-		if (Logger::debug(this, D3D12GetDebugInterface(IID_PPV_ARGS(&this->d3d12Debug))))
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&this->d3d12Debug))))
 		{
 			this->d3d12Debug->EnableDebugLayer();
 			Logger::debug(this, "Enabled D3D12 Debug Layer");
 		}
 		// Initialize DXGI Debug Layer
-		if (Logger::debug(this, DXGIGetDebugInterface1(0, IID_PPV_ARGS(&this->dxgiDebug))))
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&this->dxgiDebug))))
 		{
 			this->dxgiDebug->EnableLeakTrackingForThread();
 			Logger::debug(this, "Enabled DXGI Leak Tracking for Thread");
@@ -40,7 +40,7 @@ namespace Anito
 #endif
 		Logger::debug(this, "Initialized");
 	}
-	DebugLayer::~DebugLayer()
+	D3D12DebugLayer::~D3D12DebugLayer()
 	{
 #ifdef _DEBUG
 		if (this->dxgiDebug)
@@ -56,5 +56,5 @@ namespace Anito
 		P_SHARED_INSTANCE = nullptr;
 		Logger::debug(this, "Destroyed");
 	}
-	DebugLayer::DebugLayer(const DebugLayer&) {}
+	D3D12DebugLayer::D3D12DebugLayer(const D3D12DebugLayer&) {}
 }

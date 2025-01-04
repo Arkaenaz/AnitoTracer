@@ -88,26 +88,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DebugLayer.cpp" />
-    <ClCompile Include="Source\DeviceContext.cpp" />
-    <ClCompile Include="Source\EditorWindow.cpp" />
-    <ClCompile Include="Source\GraphicsEngine.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12DebugLayer.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12DeviceContext.cpp" />
+    <ClCompile Include="Source\Platform\EditorWindow.cpp" />
     <ClCompile Include="Source\main.cpp" />
-    <ClCompile Include="Source\RenderSystem.cpp" />
-    <ClCompile Include="Source\SwapChain.cpp" />
-    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12RenderSystem.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12SwapChain.cpp" />
+    <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resources\resource.h" />
-    <ClInclude Include="Source\DebugLayer.h" />
-    <ClInclude Include="Source\DeviceContext.h" />
-    <ClInclude Include="Source\EditorWindow.h" />
-    <ClInclude Include="Source\GraphicsEngine.h" />
-    <ClInclude Include="Source\Logger.h" />
-    <ClInclude Include="Source\RenderSystem.h" />
-    <ClInclude Include="Source\SwapChain.h" />
-    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12DebugLayer.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12DeviceContext.h" />
+    <ClInclude Include="Source\Platform\EditorWindow.h" />
+    <ClInclude Include="Source\Common\Logger.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12RenderSystem.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12SwapChain.h" />
+    <ClInclude Include="Source\Platform\Window.h" />
     <ClInclude Include="Source\WinInclude.h" />
+    <ClInclude Include="Source\Common\Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\AnitoTracer.rc" />

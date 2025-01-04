@@ -2,7 +2,7 @@
 
 #include "Window.h"
 
-#include "SwapChain.h"
+#include "Runtime/D3D12/D3D12SwapChain.h"
 
 namespace Anito
 {
@@ -18,6 +18,6 @@ namespace Anito
 		void initializeEngine();
 
 	private:
-		SwapChain* swapChain;
+		D3D12SwapChain* swapChain;
 	};
 }

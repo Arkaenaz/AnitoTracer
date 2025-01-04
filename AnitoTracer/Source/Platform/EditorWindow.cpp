@@ -1,9 +1,11 @@
 #include "EditorWindow.h"
 
-#include "DebugLayer.h"
-#include "GraphicsEngine.h"
+#include "Runtime/D3D12/D3D12DebugLayer.h"
 
-#include "Logger.h"
+#include "Runtime/D3D12/D3D12RenderSystem.h"
+#include "Runtime/D3D12/D3D12DeviceContext.h"
+
+#include "Common/Logger.h"
 
 namespace Anito
 {
@@ -17,9 +19,11 @@ namespace Anito
 	void EditorWindow::onUpdate()
 	{
 		Window::onUpdate();
-		RenderSystem* renderSystem = GraphicsEngine::getInstance()->getRenderSystem();
+		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
 		auto* cmdList = renderSystem->getImmediateDeviceContext()->initCommandList();
+
+		renderSystem->getImmediateDeviceContext()->clearRenderTargetColor(this->swapChain, 1, 0, 0, 1);
 
 		renderSystem->getImmediateDeviceContext()->executeCommandList();
 		this->swapChain->present(false);
@@ -28,8 +32,8 @@ namespace Anito
 	void EditorWindow::onDestroy()
 	{
 		Window::onDestroy();
-		GraphicsEngine::destroy();
-		DebugLayer::destroy();
+		D3D12RenderSystem::destroy();
+		D3D12DebugLayer::destroy();
 	}
 
 	void EditorWindow::onFocus()
@@ -44,10 +48,10 @@ namespace Anito
 
 	void EditorWindow::initializeEngine()
 	{
-		DebugLayer::initialize();
-		GraphicsEngine::initialize();
+		D3D12DebugLayer::initialize();
+		D3D12RenderSystem::initialize();
 
-		RenderSystem* renderSystem = GraphicsEngine::getInstance()->getRenderSystem();
+		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
 		// Initialize the Swap Chain
 		RECT windowRect = this->getClientWindowRect();
