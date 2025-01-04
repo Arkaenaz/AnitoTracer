@@ -8,9 +8,9 @@ namespace Anito
 		return new D3D12SwapChain(this, hwnd, width, height);
 	}
 
-	D3D12DeviceContext* D3D12RenderSystem::getImmediateDeviceContext()
+	D3D12DeviceContext* D3D12RenderSystem::getDXContext()
 	{
-		return this->immediateDeviceContext;
+		return this->deviceContext;
 	}
 
 	IDXGIFactory7* D3D12RenderSystem::getDXFactory()
@@ -110,7 +110,7 @@ namespace Anito
 			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
 		}
 
-		this->immediateDeviceContext = new D3D12DeviceContext(this, this->device);
+		this->deviceContext = new D3D12DeviceContext(this, this->device);
 
 		//this->device->QueryInterface(IID_PPV_ARGS(&this->dxgiDevice));
 

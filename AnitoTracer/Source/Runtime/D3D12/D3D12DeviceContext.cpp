@@ -76,17 +76,6 @@ namespace Anito
 
 		// Increment the fence value for the current frame.
 		this->fenceValues[frameIndex]++;
-		/*if (SUCCEEDED(this->fence->SetEventOnCompletion(this->fenceValue, this->fenceEvent)))
-		{
-			if (WaitForSingleObject(this->fenceEvent, 20000) != WAIT_OBJECT_0)
-			{
-				std::exit(-1);
-			}
-		}
-		else
-		{
-			std::exit(-1);
-		}*/
 	}
 
 	// Prepare to render the next frame.
@@ -145,20 +134,28 @@ namespace Anito
 
 		FLOAT clearColor[] = { red, green, blue, alpha };
 
-		// Indicate that the back buffer will be used as a render target.
-		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChain->renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		this->cmdList->ResourceBarrier(1, &barrier);
-
-		// Record commands.
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(swapChain->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
 		this->cmdList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 		this->cmdList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
-		// Indicate that the back buffer will now be used to present.
-		barrier = CD3DX12_RESOURCE_BARRIER::Transition(swapChain->renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-		this->cmdList->ResourceBarrier(1, &barrier);
-
 		/*m_deviceContext->ClearDepthStencilView(renderTexture->m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);*/
+	}
+
+	void D3D12DeviceContext::setViewportSize(UINT width, UINT height)
+	{
+		D3D12_VIEWPORT vp = {};
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		vp.Width = (FLOAT)width;
+		vp.Height = (FLOAT)height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		this->cmdList->RSSetViewports(1, &vp);
+
+		RECT scRect;
+		scRect.left = scRect.top = 0.0f;
+		scRect.right = (FLOAT)width;
+		scRect.bottom = (FLOAT)height;
+		this->cmdList->RSSetScissorRects(1, &scRect);
 	}
 
 	ID3D12CommandQueue* D3D12DeviceContext::getCommandQueue()

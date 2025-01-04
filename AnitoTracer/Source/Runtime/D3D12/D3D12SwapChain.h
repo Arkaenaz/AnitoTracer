@@ -12,13 +12,14 @@ namespace Anito
 		~D3D12SwapChain();
 
 		void cleanRenderTarget();
-		void resizeBuffers( UINT width, UINT height);
+		void resizeBuffers(UINT width, UINT height);
 		void createRenderTarget();
 		bool present(bool vsync);
 
 		void updateFrameIndex();
 		UINT getFrameIndex();
 		UINT getRTVDescriptorSize();
+		ID3D12Resource2* getRenderTarget(UINT frameIndex);
 
 	private:
 		static const UINT FrameCount = 2;
@@ -31,6 +32,6 @@ namespace Anito
 		IDXGISwapChain4* swapChain;
 		ID3D12DescriptorHeap* renderTargetViewHeap;
 		UINT rtvDescriptorSize;
-		ID3D12Resource* renderTargets[FrameCount];
+		ID3D12Resource2* renderTargets[FrameCount];
 	};
 }

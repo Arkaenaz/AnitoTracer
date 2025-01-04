@@ -9,7 +9,7 @@ namespace Anito
 		system(system), frameIndex(0), rtvDescriptorSize(0)
 	{
 		ID3D12Device10* device = this->system->getDXDevice();
-		D3D12DeviceContext* deviceContext = this->system->getImmediateDeviceContext();
+		D3D12DeviceContext* deviceContext = this->system->getDXContext();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -131,5 +131,10 @@ namespace Anito
 	UINT D3D12SwapChain::getRTVDescriptorSize()
 	{
 		return this->rtvDescriptorSize;
+	}
+
+	ID3D12Resource2* D3D12SwapChain::getRenderTarget(UINT frameIndex)
+	{
+		return this->renderTargets[frameIndex];
 	}
 }

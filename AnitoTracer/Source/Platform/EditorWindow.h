@@ -17,6 +17,8 @@ namespace Anito
 		virtual void onKillFocus() override;
 
 		void initializeEngine();
+		void beginFrame(ID3D12GraphicsCommandList7* cmdList);
+		void endFrame(ID3D12GraphicsCommandList7* cmdList);
 
 	private:
 		D3D12SwapChain* swapChain;

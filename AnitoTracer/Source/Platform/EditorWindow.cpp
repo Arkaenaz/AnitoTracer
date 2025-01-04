@@ -25,15 +25,30 @@ namespace Anito
 		Window::onUpdate();
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
-		auto* cmdList = renderSystem->getImmediateDeviceContext()->initCommandList(this->swapChain->getFrameIndex());
+		RECT windowRect = this->getClientWindowRect();
 
-		renderSystem->getImmediateDeviceContext()->clearRenderTargetColor(this->swapChain, 1, 0, 0, 1);
+		FLOAT width = windowRect.right - windowRect.left;
+		FLOAT height = windowRect.bottom - windowRect.top;
 
-		renderSystem->getImmediateDeviceContext()->executeCommandList();
+		// Resets and Reinitializes Command List
+		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex());
+
+		// Begin Frame
+		this->beginFrame(cmdList);
+
+		// Populate command list
+		renderSystem->getDXContext()->setViewportSize(width, height);
+		renderSystem->getDXContext()->clearRenderTargetColor(this->swapChain, 0.207, 0.145, 0.223, 1);
+
+		// End Frame
+		this->endFrame(cmdList);
+
+		// Executes command list
+		renderSystem->getDXContext()->executeCommandList();
 
 		this->swapChain->present(false);
 
-		renderSystem->getImmediateDeviceContext()->moveToNextFrame(this->swapChain);
+		renderSystem->getDXContext()->moveToNextFrame(this->swapChain);
 	}
 
 	void EditorWindow::onDestroy()
@@ -69,5 +84,23 @@ namespace Anito
 		this->swapChain = renderSystem->createSwapChain(this->windowHandle, width, height);
 
 		Logger::debug(this, "Initialized Engine");
+	}
+
+	void EditorWindow::beginFrame(ID3D12GraphicsCommandList7* cmdList)
+	{
+		UINT frameIndex = this->swapChain->getFrameIndex();
+
+		// Indicate that the back buffer will be used as a render target.
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(this->swapChain->getRenderTarget(frameIndex), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		cmdList->ResourceBarrier(1, &barrier);
+	}
+
+	void EditorWindow::endFrame(ID3D12GraphicsCommandList7* cmdList)
+	{
+		UINT frameIndex = this->swapChain->getFrameIndex();
+
+		// Indicate that the back buffer will now be used to present.
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(this->swapChain->getRenderTarget(frameIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		cmdList->ResourceBarrier(1, &barrier);
 	}
 }

@@ -11,14 +11,14 @@ namespace Anito
 	{
 	public:
 		D3D12SwapChain* createSwapChain(HWND hwnd, UINT width, UINT height);
-		D3D12DeviceContext* getImmediateDeviceContext();
+		D3D12DeviceContext* getDXContext();
 		IDXGIFactory7* getDXFactory();
 		ID3D12Device10* getDXDevice();
 
 	private:
 		friend class D3D12SwapChain;
 
-		D3D12DeviceContext* immediateDeviceContext;
+		D3D12DeviceContext* deviceContext;
 
 		ID3D12Device10* device;
 		D3D_FEATURE_LEVEL featureLevel;

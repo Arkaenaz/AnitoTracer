@@ -19,6 +19,7 @@ namespace Anito
 		void executeCommandList();
 
 		void clearRenderTargetColor(D3D12SwapChain* swapChain, float red, float green, float blue, float alpha);
+		void setViewportSize(UINT width, UINT height);
 
 		ID3D12CommandQueue* getCommandQueue();
 
