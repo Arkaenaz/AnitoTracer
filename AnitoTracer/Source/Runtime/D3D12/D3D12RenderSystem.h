@@ -1,7 +1,5 @@
 #pragma once
 
-#include "WinInclude.h"
-
 #include "D3D12DeviceContext.h"
 #include "D3D12SwapChain.h"
 

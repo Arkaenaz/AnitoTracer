@@ -1,3 +1,4 @@
+#include "AnitoTracerPCH.h"
 #include "Platform/EditorWindow.h"
 
 int main()

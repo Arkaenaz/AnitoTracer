@@ -1,6 +1,5 @@
+#include "AnitoTracerPCH.h"
 #include "D3D12DeviceContext.h"
-
-#include "Common/Logger.h"
 
 namespace Anito
 {
@@ -80,7 +79,7 @@ namespace Anito
 		if (SUCCEEDED(this->cmdList->Close()))
 		{
 			ID3D12CommandList* lists[] = { this->cmdList };
-			this->cmdQueue->ExecuteCommandLists(1, lists);
+			this->cmdQueue->ExecuteCommandLists(_countof(lists), lists);
 			this->signalAndWait();
 		}
 	}

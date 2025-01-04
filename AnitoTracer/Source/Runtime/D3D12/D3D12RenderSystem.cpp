@@ -1,6 +1,5 @@
+#include "AnitoTracerPCH.h"
 #include "D3D12RenderSystem.h"
-
-#include "Common/Logger.h"
 
 namespace Anito
 {
@@ -125,6 +124,8 @@ namespace Anito
 		//this->dxgiDevice->Release();
 		this->dxgiAdapter->Release();
 		this->dxgiFactory->Release();
+
+		Logger::debug(this, "Destroyed");
 	};
 	D3D12RenderSystem::D3D12RenderSystem(const D3D12RenderSystem&) {}
 }

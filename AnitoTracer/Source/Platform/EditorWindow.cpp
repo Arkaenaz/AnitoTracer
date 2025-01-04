@@ -1,11 +1,10 @@
+#include "AnitoTracerPCH.h"
 #include "EditorWindow.h"
 
 #include "Runtime/D3D12/D3D12DebugLayer.h"
 
 #include "Runtime/D3D12/D3D12RenderSystem.h"
 #include "Runtime/D3D12/D3D12DeviceContext.h"
-
-#include "Common/Logger.h"
 
 namespace Anito
 {

@@ -60,6 +60,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>AnitoTracerPCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,6 +82,10 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>AnitoTracerPCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,7 +99,10 @@
     <ClCompile Include="Source\Runtime\D3D12\D3D12DebugLayer.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12DeviceContext.cpp" />
     <ClCompile Include="Source\Platform\EditorWindow.cpp" />
-    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\main.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AnitoTracerPCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AnitoTracerPCH.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12RenderSystem.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12SwapChain.cpp" />
     <ClCompile Include="Source\Platform\Window.cpp" />
@@ -105,7 +116,7 @@
     <ClInclude Include="Source\Runtime\D3D12\D3D12RenderSystem.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12SwapChain.h" />
     <ClInclude Include="Source\Platform\Window.h" />
-    <ClInclude Include="Source\WinInclude.h" />
+    <ClInclude Include="Source\AnitoTracerPCH.h" />
     <ClInclude Include="Source\Common\Time.h" />
   </ItemGroup>
   <ItemGroup>

@@ -79,9 +79,6 @@
     <ClInclude Include="Source\Platform\Window.h">
       <Filter>Source\Engine\WindowSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Source\WinInclude.h">
-      <Filter>Source\Engine\Support</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -93,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="Source\Common\Time.h">
       <Filter>Source\Engine\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnitoTracerPCH.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,5 @@
 #pragma once
 
-#define NOMINMAX
-
-#include <Windows.h>
-
 namespace Anito
 {
 	class Window

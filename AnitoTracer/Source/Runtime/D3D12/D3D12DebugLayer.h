@@ -1,7 +1,5 @@
 #pragma once
 
-#include "WinInclude.h"
-
 namespace Anito
 {
 	class D3D12DebugLayer

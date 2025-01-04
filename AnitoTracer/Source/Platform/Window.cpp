@@ -1,6 +1,5 @@
+#include "AnitoTracerPCH.h"
 #include "Window.h"
-
-#include "Common/Logger.h"
 
 LRESULT CALLBACK WndProc(HWND windowHandle, UINT msg, WPARAM wParam, LPARAM lParam)
 {

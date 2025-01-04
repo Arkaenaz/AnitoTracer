@@ -1,6 +1,5 @@
+#include "AnitoTracerPCH.h"
 #include "D3D12DebugLayer.h"
-
-#include "Common/Logger.h"
 
 namespace Anito
 {

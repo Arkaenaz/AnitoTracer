@@ -1,8 +1,7 @@
+#include "AnitoTracerPCH.h"
 #include "D3D12SwapChain.h"
 
 #include "D3D12RenderSystem.h"
-
-#include "Common/Logger.h"
 
 namespace Anito
 {
