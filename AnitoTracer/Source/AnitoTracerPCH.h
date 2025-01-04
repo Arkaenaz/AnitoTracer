@@ -12,5 +12,7 @@
 #include <dxgidebug.h>
 #endif
 
+#include "Libraries/D3DX12/d3dx12.h"
+
 #include "Common/Logger.h"
 #include "Common/Time.h"
