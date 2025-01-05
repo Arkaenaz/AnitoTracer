@@ -39,6 +39,9 @@
     <Filter Include="Source\Engine\D3D12\DebugLayer">
       <UniqueIdentifier>{a09ef97b-fe8b-4973-829a-4295009d02a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\D3DX12">
+      <UniqueIdentifier>{88f2109b-7ffa-4f61-b7b0-f55e78c3d3ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\EditorWindow.cpp">
@@ -93,6 +96,39 @@
     </ClInclude>
     <ClInclude Include="Source\AnitoTracerPCH.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_barriers.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_check_feature_support.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_core.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_default.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_pipeline_state_stream.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_property_format_table.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_render_pass.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_resource_helpers.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_root_signature.h">
+      <Filter>Source\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Libraries\D3DX12\d3dx12_state_object.h">
+      <Filter>Source\D3DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
