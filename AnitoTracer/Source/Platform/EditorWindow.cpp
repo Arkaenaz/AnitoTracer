@@ -31,14 +31,21 @@ namespace Anito
 		FLOAT height = windowRect.bottom - windowRect.top;
 
 		// Resets and Reinitializes Command List
-		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex());
+		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
+
+		cmdList->SetGraphicsRootSignature(this->pipelineState->getRootSignature());
+		renderSystem->getDXContext()->setViewportSize(width, height);
 
 		// Begin Frame
 		this->beginFrame(cmdList);
 
 		// Populate command list
-		renderSystem->getDXContext()->setViewportSize(width, height);
 		renderSystem->getDXContext()->clearRenderTargetColor(this->swapChain, 0.207, 0.145, 0.223, 1);
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView = this->vertexBuffer->getVertexBufferView();
+		cmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
+		cmdList->DrawInstanced(3, 1, 0, 0);
 
 		// End Frame
 		this->endFrame(cmdList);
@@ -55,7 +62,9 @@ namespace Anito
 	{
 		Window::onDestroy();
 
+		delete this->vertexBuffer;
 		delete this->swapChain;
+		delete this->pipelineState;
 		D3D12RenderSystem::destroy();
 		D3D12DebugLayer::destroy();
 	}
@@ -77,6 +86,9 @@ namespace Anito
 
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
+		// Initialize Pipeline State
+		this->pipelineState = renderSystem->createPipelineState();
+
 		// Initialize the Swap Chain
 		RECT windowRect = this->getClientWindowRect();
 
@@ -84,6 +96,22 @@ namespace Anito
 		FLOAT height = windowRect.bottom - windowRect.top;
 
 		this->swapChain = renderSystem->createSwapChain(this->windowHandle, width, height);
+
+		// Start up the command list for other initialization
+		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
+
+		Vertex triangleVertices[] =
+		{
+			{ { 0.0f, 0.25f * (width / height), 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+			{ { 0.25f, -0.25f * (width / height), 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+			{ { -0.25f, -0.25f * (width / height), 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+		};
+
+		// Create Vertex Buffer
+		this->vertexBuffer = renderSystem->createVertexBuffer(triangleVertices, sizeof(Vertex), ARRAYSIZE(triangleVertices));
+
+		// Close the command list
+		cmdList->Close();
 
 		Logger::debug(this, "Initialized Engine");
 	}

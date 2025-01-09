@@ -2,28 +2,31 @@
 
 #include "D3D12DeviceContext.h"
 #include "D3D12SwapChain.h"
+#include "D3D12VertexBuffer.h"
+#include "D3D12PipelineState.h"
 
 namespace Anito
 {
+	class D3D12PipelineState;
 	class D3D12DeviceContext;
 	class D3D12SwapChain;
+	class D3D12VertexBuffer;
 	class D3D12RenderSystem
 	{
 	public:
 		D3D12SwapChain* createSwapChain(HWND hwnd, UINT width, UINT height);
+		D3D12PipelineState* createPipelineState();
+		D3D12VertexBuffer* createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList);
 		D3D12DeviceContext* getDXContext();
 		IDXGIFactory7* getDXFactory();
-		ID3D12Device10* getDXDevice();
 
 	private:
 		friend class D3D12SwapChain;
 
 		D3D12DeviceContext* deviceContext;
 
-		ID3D12Device10* device;
 		D3D_FEATURE_LEVEL featureLevel;
 
-		//IDXGIDevice4* dxgiDevice;
 		IDXGIAdapter4* dxgiAdapter;
 		IDXGIFactory7* dxgiFactory;
 
@@ -37,7 +40,7 @@ namespace Anito
 
 		D3D12RenderSystem();
 		~D3D12RenderSystem();
-		D3D12RenderSystem(D3D12RenderSystem const&);
-		D3D12RenderSystem& operator = (D3D12RenderSystem const&);
+		D3D12RenderSystem(D3D12RenderSystem const&) {}
+		D3D12RenderSystem& operator = (D3D12RenderSystem const&) {}
 	};
 }

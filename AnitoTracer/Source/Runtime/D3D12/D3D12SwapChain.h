@@ -10,6 +10,8 @@ namespace Anito
 	public:
 		D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height);
 		~D3D12SwapChain();
+		D3D12SwapChain(const D3D12SwapChain&) = delete;
+		D3D12SwapChain& operator=(const D3D12SwapChain&) = delete;
 
 		void cleanRenderTarget();
 		void resizeBuffers(UINT width, UINT height);

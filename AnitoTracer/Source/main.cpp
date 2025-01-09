@@ -9,5 +9,6 @@ int main()
 	{
 		editorWindow->broadcast();
 	}
+
 	return 0;
 }

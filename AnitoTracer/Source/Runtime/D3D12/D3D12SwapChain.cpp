@@ -8,7 +8,7 @@ namespace Anito
 	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) :
 		system(system), frameIndex(0), rtvDescriptorSize(0)
 	{
-		ID3D12Device10* device = this->system->getDXDevice();
+		ID3D12Device10* device = this->system->getDXContext()->getDevice();
 		D3D12DeviceContext* deviceContext = this->system->getDXContext();
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -42,7 +42,6 @@ namespace Anito
 
 		this->swapChain = static_cast<IDXGISwapChain4*>(swapChain);
 		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
-
 
 		{
 			// Describe and create a render target view (RTV) descriptor heap.

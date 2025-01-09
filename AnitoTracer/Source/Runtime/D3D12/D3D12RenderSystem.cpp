@@ -8,6 +8,21 @@ namespace Anito
 		return new D3D12SwapChain(this, hwnd, width, height);
 	}
 
+	// TODO : Create Custom Rasterizer States and Blend States
+	D3D12PipelineState* D3D12RenderSystem::createPipelineState()
+	{
+		return new D3D12PipelineState(this);
+	}
+
+	D3D12VertexBuffer* D3D12RenderSystem::createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList)
+	{
+		D3D12VertexBuffer* vertexBuffer = nullptr;
+		vertexBuffer = new D3D12VertexBuffer(this);
+		vertexBuffer->load(listVertices, sizeVertex, sizeList);
+
+		return vertexBuffer;
+	}
+
 	D3D12DeviceContext* D3D12RenderSystem::getDXContext()
 	{
 		return this->deviceContext;
@@ -16,11 +31,6 @@ namespace Anito
 	IDXGIFactory7* D3D12RenderSystem::getDXFactory()
 	{
 		return this->dxgiFactory;
-	}
-
-	ID3D12Device10* D3D12RenderSystem::getDXDevice()
-	{
-		return this->device;
 	}
 
 	D3D12RenderSystem* D3D12RenderSystem::getInstance()
@@ -80,7 +90,8 @@ namespace Anito
 			}
 		}
 
-		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&this->device));
+		ID3D12Device10* device;
+		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device));
 		Logger::logHResult(this, hr);
 		if (FAILED(hr))
 		{
@@ -102,7 +113,8 @@ namespace Anito
 		};
 
 		this->featureLevel = D3D_FEATURE_LEVEL_11_0;
-		hr = this->device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS,
+		
+		hr = device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS,
 			&featLevels, sizeof(featLevels));
 
 		if (SUCCEEDED(hr))
@@ -110,24 +122,25 @@ namespace Anito
 			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
 		}
 
-		this->deviceContext = new D3D12DeviceContext(this, this->device);
+		this->deviceContext = new D3D12DeviceContext(device);
 
 		//this->device->QueryInterface(IID_PPV_ARGS(&this->dxgiDevice));
 
+		if (this->deviceContext == nullptr)
+		{
+			Logger::debug(this, "Device Context is null");
+		}
 		Logger::debug(this, "Initialized");
 	}
 
 	D3D12RenderSystem::~D3D12RenderSystem()
 	{
 		delete this->deviceContext;
-		this->device->Release();
 
-		//this->dxgiDevice->Release();
 		this->dxgiAdapter->Release();
 		this->dxgiFactory->Release();
 
 		Logger::debug(this, "Destroyed");
 	};
-	D3D12RenderSystem::D3D12RenderSystem(const D3D12RenderSystem&) {}
 }
 

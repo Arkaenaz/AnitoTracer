@@ -17,9 +17,6 @@
     <Filter Include="Source\Engine\WindowSystem">
       <UniqueIdentifier>{4a601a48-a4c8-40fa-a335-cdeed27ad8e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\Support">
-      <UniqueIdentifier>{eceb0b65-6126-455d-9cd1-dadc4865539b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Application">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -39,8 +36,14 @@
     <Filter Include="Source\Engine\D3D12\DebugLayer">
       <UniqueIdentifier>{a09ef97b-fe8b-4973-829a-4295009d02a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\D3DX12">
+    <Filter Include="Source\Engine\D3DX12">
       <UniqueIdentifier>{88f2109b-7ffa-4f61-b7b0-f55e78c3d3ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\VertexBuffer">
+      <UniqueIdentifier>{5d9d8467-87b4-492d-a874-b4c74fd2556e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\PipelineState">
+      <UniqueIdentifier>{84b1ad3b-ae24-4e24-bab5-2f9eaf30cf41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +67,12 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12DebugLayer.cpp">
       <Filter>Source\Engine\D3D12\DebugLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12VertexBuffer.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\VertexBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12PipelineState.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,37 +107,43 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_barriers.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_check_feature_support.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_core.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_default.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_pipeline_state_stream.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_property_format_table.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_render_pass.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_resource_helpers.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_root_signature.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
     </ClInclude>
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_state_object.h">
-      <Filter>Source\D3DX12</Filter>
+      <Filter>Source\Engine\D3DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12VertexBuffer.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\VertexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12PipelineState.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
