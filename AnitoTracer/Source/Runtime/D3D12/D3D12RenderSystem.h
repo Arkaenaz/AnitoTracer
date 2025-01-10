@@ -1,6 +1,7 @@
 #pragma once
 
-#include "D3D12DeviceContext.h"
+#include "D3D12Device.h"
+#include "D3D12CommandContext.h"
 #include "D3D12SwapChain.h"
 #include "D3D12VertexBuffer.h"
 #include "D3D12PipelineState.h"
@@ -8,7 +9,7 @@
 namespace Anito
 {
 	class D3D12PipelineState;
-	class D3D12DeviceContext;
+	class D3D12CommandContext;
 	class D3D12SwapChain;
 	class D3D12VertexBuffer;
 	class D3D12RenderSystem
@@ -17,15 +18,15 @@ namespace Anito
 		D3D12SwapChain* createSwapChain(HWND hwnd, UINT width, UINT height);
 		D3D12PipelineState* createPipelineState();
 		D3D12VertexBuffer* createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList);
-		D3D12DeviceContext* getDXContext();
+		D3D12Device* getDevice();
+		D3D12CommandContext* getDXContext();
 		IDXGIFactory7* getDXFactory();
 
 	private:
 		friend class D3D12SwapChain;
 
-		D3D12DeviceContext* deviceContext;
-
-		D3D_FEATURE_LEVEL featureLevel;
+		D3D12Device* device;
+		D3D12CommandContext* commandContext;
 
 		IDXGIAdapter4* dxgiAdapter;
 		IDXGIFactory7* dxgiFactory;

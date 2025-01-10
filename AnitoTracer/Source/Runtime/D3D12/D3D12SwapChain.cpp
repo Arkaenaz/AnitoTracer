@@ -5,11 +5,26 @@
 
 namespace Anito
 {
-	D3D12SwapChain::D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height) :
-		system(system), frameIndex(0), rtvDescriptorSize(0)
+	D3D12SwapChain::D3D12SwapChain(const D3D12Device& device, D3D12RenderSystem* system, UINT width, UINT height, HWND handle) :
+		device(device), frameIndex(0), rtvDescriptorSize(0)
 	{
-		ID3D12Device10* device = this->system->getDXContext()->getDevice();
-		D3D12DeviceContext* deviceContext = this->system->getDXContext();
+		D3D12CommandContext* deviceContext = system->getDXContext();
+
+		BOOL allowTearing = true;
+		UINT swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		if (FAILED(system->getDXFactory()->CheckFeatureSupport(
+			DXGI_FEATURE_PRESENT_ALLOW_TEARING,
+			&allowTearing, sizeof(allowTearing))))
+		{
+			Logger::debug(this, "Tearing is not supported");
+			allowTearing = false;
+		}
+		else
+		{
+			Logger::debug(this, "Tearing is supported");
+		}
+
+		swapChainFlags |= allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -23,13 +38,13 @@ namespace Anito
 		swapChainDesc.BufferCount = FrameCount;
 		swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-		swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+		swapChainDesc.Flags = swapChainFlags;
 
 		// Create the swap chain for the window indicated by HWND parameter
 		IDXGISwapChain1* swapChain;
-		HRESULT hr = this->system->dxgiFactory->CreateSwapChainForHwnd(deviceContext->getCommandQueue(), 
-			hwnd, &swapChainDesc, nullptr, nullptr, &swapChain);
+		HRESULT hr = system->getDXFactory()->CreateSwapChainForHwnd(deviceContext->getCommandQueue(),
+			handle, &swapChainDesc, nullptr, nullptr, &swapChain);
 
 		if (SUCCEEDED(hr))
 		{
@@ -40,9 +55,9 @@ namespace Anito
 			Logger::error(this, "SwapChain not created successfully");
 		}
 
-		this->swapChain = static_cast<IDXGISwapChain4*>(swapChain);
+		system->getDXFactory()->MakeWindowAssociation(handle, DXGI_MWA_NO_ALT_ENTER);
+		swapChain->QueryInterface(&this->swapChain);
 		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
-
 		{
 			// Describe and create a render target view (RTV) descriptor heap.
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
@@ -50,7 +65,7 @@ namespace Anito
 			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-			if (SUCCEEDED(device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap))))
+			if (SUCCEEDED(device.get()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap))))
 			{
 				Logger::debug(this, "Render Target View created successfully");
 			}
@@ -59,7 +74,7 @@ namespace Anito
 				Logger::error(this, "Render Target View not created successfully");
 			}
 
-			this->rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+			this->rtvDescriptorSize = device.get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		}
 
 		{
@@ -69,7 +84,7 @@ namespace Anito
 			for (UINT n = 0; n < FrameCount; n++)
 			{
 				this->swapChain->GetBuffer(n, IID_PPV_ARGS(&this->renderTargets[n]));
-				device->CreateRenderTargetView(this->renderTargets[n], nullptr, rtvHandle);
+				device.get()->CreateRenderTargetView(this->renderTargets[n], nullptr, rtvHandle);
 				rtvHandle.Offset(1, this->rtvDescriptorSize);
 			}
 		}

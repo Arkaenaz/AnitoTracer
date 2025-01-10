@@ -1,36 +1,25 @@
 #include "AnitoTracerPCH.h"
-#include "D3D12DeviceContext.h"
+#include "D3D12CommandContext.h"
 
 #include "D3D12SwapChain.h"
 
 namespace Anito
 {
-	D3D12DeviceContext::D3D12DeviceContext(ID3D12Device10* device) :
-		device(device)
+	D3D12CommandContext::D3D12CommandContext(const D3D12Device& device)
 	{
-#if defined(_DEBUG)
-		ID3D12InfoQueue* infoQueue;
-		if (SUCCEEDED(this->device->QueryInterface(&infoQueue)))
-		{
-			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
-			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
-			//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
-		}
-#endif
-
 		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
 		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;
 		cmdQueueDesc.NodeMask = 0;
 		cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-		if (SUCCEEDED(this->device->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&this->commandQueue))))
+		if (SUCCEEDED(device.get()->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&this->commandQueue))))
 		{
 			Logger::debug(this, "Command Queue created successfully");
 		}
 
 
-		if (SUCCEEDED(this->device->CreateFence(this->fenceValues[0], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
+		if (SUCCEEDED(device.get()->CreateFence(this->fenceValues[0], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
 		{
 			Logger::debug(this, "Fence created successfully");
 		}
@@ -43,21 +32,20 @@ namespace Anito
 
 		for (UINT n = 0; n < D3D12SwapChain::FrameCount; n++)
 		{
-			if (SUCCEEDED(this->device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->commandAllocators[n]))))
+			if (SUCCEEDED(device.get()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->commandAllocators[n]))))
 			{
 				Logger::debug(this, "Command Allocator created successfully");
 			}
 		}
 
-		if (SUCCEEDED(this->device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, _uuidof(ID3D12GraphicsCommandList7), (void**)&this->commandList)))
+		if (SUCCEEDED(device.get()->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, _uuidof(ID3D12GraphicsCommandList7), (void**)&this->commandList)))
 		{
 			Logger::debug(this, "Command List created successfully");
 		}
 	}
 
-	D3D12DeviceContext::~D3D12DeviceContext()
+	D3D12CommandContext::~D3D12CommandContext()
 	{
-		this->device->Release();
 		this->commandList->Release();
 		for (size_t i = 0; i < ARRAYSIZE(this->commandAllocators); i++)
 		{
@@ -72,7 +60,7 @@ namespace Anito
 	}
 
 	// Wait for pending GPU work to complete.
-	void D3D12DeviceContext::signalAndWaitForGpu(UINT frameIndex)
+	void D3D12CommandContext::signalAndWaitForGpu(UINT frameIndex)
 	{
 		// Schedule a Signal command in the queue.
 		if (FAILED(this->commandQueue->Signal(this->fence, this->fenceValues[frameIndex])))
@@ -96,7 +84,7 @@ namespace Anito
 	}
 
 	// Prepare to render the next frame.
-	void D3D12DeviceContext::moveToNextFrame(D3D12SwapChain* swapChain)
+	void D3D12CommandContext::moveToNextFrame(D3D12SwapChain* swapChain)
 	{
 		const UINT frameIndex = swapChain->getFrameIndex();
 		// Schedule a Signal command in the queue.
@@ -125,11 +113,9 @@ namespace Anito
 
 		// Set the fence value for the next frame.
 		this->fenceValues[frameIndex] = currentFenceValue + 1;
-
-		
 	}
 
-	ID3D12GraphicsCommandList10* D3D12DeviceContext::initCommandList(UINT frameIndex, ID3D12PipelineState* pipelineState)
+	ID3D12GraphicsCommandList10* D3D12CommandContext::initCommandList(UINT frameIndex, ID3D12PipelineState* pipelineState)
 	{
 		this->commandAllocators[frameIndex]->Reset();
 		this->commandList->Reset(this->commandAllocators[frameIndex], pipelineState);
@@ -137,7 +123,7 @@ namespace Anito
 		return this->commandList;
 	}
 
-	void D3D12DeviceContext::executeCommandList()
+	void D3D12CommandContext::executeCommandList()
 	{
 		if (SUCCEEDED(this->commandList->Close()))
 		{
@@ -146,7 +132,7 @@ namespace Anito
 		}
 	}
 
-	void D3D12DeviceContext::clearRenderTargetColor(D3D12SwapChain* swapChain, float red, float green, float blue, float alpha)
+	void D3D12CommandContext::clearRenderTargetColor(D3D12SwapChain* swapChain, float red, float green, float blue, float alpha)
 	{
 		UINT frameIndex = swapChain->getFrameIndex();
 		UINT rtvDescriptorSize = swapChain->getRTVDescriptorSize();
@@ -159,7 +145,7 @@ namespace Anito
 		/*m_deviceContext->ClearDepthStencilView(renderTexture->m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);*/
 	}
 
-	void D3D12DeviceContext::setViewportSize(UINT width, UINT height)
+	void D3D12CommandContext::setViewportSize(UINT width, UINT height)
 	{
 		//TODO : Move this into a Graphics Pipeline Class
 		D3D12_VIEWPORT vp = {};
@@ -178,18 +164,13 @@ namespace Anito
 		this->commandList->RSSetScissorRects(1, &scRect);
 	}
 
-	void D3D12DeviceContext::copyBufferRegion(ID3D12Resource* destination, UINT64 destinationOffset,
+	void D3D12CommandContext::copyBufferRegion(ID3D12Resource* destination, UINT64 destinationOffset,
 		ID3D12Resource* source, UINT64 sourceOffset, UINT64 numBytes)
 	{
 		this->commandList->CopyBufferRegion(destination, destinationOffset, source, sourceOffset, numBytes);
 	}
 
-	ID3D12Device10* D3D12DeviceContext::getDevice()
-	{
-		return this->device;
-	}
-
-	ID3D12CommandQueue* D3D12DeviceContext::getCommandQueue()
+	ID3D12CommandQueue* D3D12CommandContext::getCommandQueue()
 	{
 		return this->commandQueue;
 	}

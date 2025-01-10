@@ -8,7 +8,7 @@ namespace Anito
 	class D3D12SwapChain
 	{
 	public:
-		D3D12SwapChain(D3D12RenderSystem* system, HWND hwnd, UINT width, UINT height);
+		D3D12SwapChain(const D3D12Device& device, D3D12RenderSystem* system, UINT width, UINT height, HWND handle);
 		~D3D12SwapChain();
 		D3D12SwapChain(const D3D12SwapChain&) = delete;
 		D3D12SwapChain& operator=(const D3D12SwapChain&) = delete;
@@ -24,11 +24,11 @@ namespace Anito
 		ID3D12Resource2* getRenderTarget(UINT frameIndex);
 
 	private:
+		const D3D12Device& device;
+
 		static const UINT FrameCount = 2;
 
-		friend class D3D12DeviceContext;
-
-		D3D12RenderSystem* system = nullptr;
+		friend class D3D12CommandContext;
 
 		UINT frameIndex;
 		IDXGISwapChain4* swapChain;

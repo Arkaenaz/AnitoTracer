@@ -55,5 +55,4 @@ namespace Anito
 		P_SHARED_INSTANCE = nullptr;
 		Logger::debug(this, "Destroyed");
 	}
-	D3D12DebugLayer::D3D12DebugLayer(const D3D12DebugLayer&) {}
 }

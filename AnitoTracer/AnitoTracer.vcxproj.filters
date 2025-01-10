@@ -27,9 +27,6 @@
     <Filter Include="Source\Engine\D3D12\RenderSystem">
       <UniqueIdentifier>{27081f42-7f43-4d0e-afa8-d832f66921ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\D3D12\RenderSystem\DeviceContext">
-      <UniqueIdentifier>{dc2ebceb-fe3b-414c-bc82-e752e96fdd09}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\D3D12\RenderSystem\SwapChain">
       <UniqueIdentifier>{beabf58b-928c-4f45-a77b-b1fd912d3c68}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,18 @@
     <Filter Include="Source\Engine\D3D12\RenderSystem\PipelineState">
       <UniqueIdentifier>{84b1ad3b-ae24-4e24-bab5-2f9eaf30cf41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\Device">
+      <UniqueIdentifier>{dc2ebceb-fe3b-414c-bc82-e752e96fdd09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\Resource">
+      <UniqueIdentifier>{50f4ced5-d4ae-49b0-a211-51e1f7b04c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\CommandContext">
+      <UniqueIdentifier>{01bd7f7d-125a-4f3e-9ca5-f5bfbd68eb8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\Resource\Buffer">
+      <UniqueIdentifier>{5f40ef26-5282-4b00-878c-8d3e601b2121}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\EditorWindow.cpp">
@@ -55,9 +64,6 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12RenderSystem.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Runtime\D3D12\D3D12DeviceContext.cpp">
-      <Filter>Source\Engine\D3D12\RenderSystem\DeviceContext</Filter>
     </ClCompile>
     <ClCompile Include="Source\Platform\Window.cpp">
       <Filter>Source\Engine\WindowSystem</Filter>
@@ -74,6 +80,18 @@
     <ClCompile Include="Source\Runtime\D3D12\D3D12PipelineState.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Device.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12CommandContext.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\CommandContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Buffer.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\Resource\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Resource.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Platform\EditorWindow.h">
@@ -84,9 +102,6 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12RenderSystem.h">
       <Filter>Source\Engine\D3D12\RenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Runtime\D3D12\D3D12DeviceContext.h">
-      <Filter>Source\Engine\D3D12\RenderSystem\DeviceContext</Filter>
     </ClInclude>
     <ClInclude Include="Source\Platform\Window.h">
       <Filter>Source\Engine\WindowSystem</Filter>
@@ -144,6 +159,18 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12PipelineState.h">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Device.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12CommandContext.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\CommandContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Buffer.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\Resource\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Resource.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

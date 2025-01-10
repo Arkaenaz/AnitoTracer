@@ -13,10 +13,8 @@ namespace Anito
         CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
         rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-        
-
         D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &this->signature, &this->error);
-        this->system->getDXContext()->getDevice()->CreateRootSignature(0, this->signature->GetBufferPointer(), this->signature->GetBufferSize(), IID_PPV_ARGS(&this->rootSignature));
+        this->system->getDevice()->get()->CreateRootSignature(0, this->signature->GetBufferPointer(), this->signature->GetBufferSize(), IID_PPV_ARGS(&this->rootSignature));
 
 #if defined(_DEBUG)
         // Enable better shader debugging with the graphics debugging tools.
@@ -52,7 +50,7 @@ namespace Anito
         psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
         psoDesc.SampleDesc.Count = 1;
 
-        HRESULT hr = this->system->getDXContext()->getDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&this->pipelineState));
+        HRESULT hr = this->system->getDevice()->get()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&this->pipelineState));
         if (SUCCEEDED(hr))
         {
             Logger::debug(this, "Pipeline State created successfully");

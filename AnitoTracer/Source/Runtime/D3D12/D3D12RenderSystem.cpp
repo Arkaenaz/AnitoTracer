@@ -1,11 +1,13 @@
 #include "AnitoTracerPCH.h"
 #include "D3D12RenderSystem.h"
 
+#include "D3D12Device.h"
+
 namespace Anito
 {
 	D3D12SwapChain* D3D12RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 	{
-		return new D3D12SwapChain(this, hwnd, width, height);
+		return new D3D12SwapChain(*this->device, this, width, height, hwnd);
 	}
 
 	// TODO : Create Custom Rasterizer States and Blend States
@@ -18,14 +20,19 @@ namespace Anito
 	{
 		D3D12VertexBuffer* vertexBuffer = nullptr;
 		vertexBuffer = new D3D12VertexBuffer(this);
-		vertexBuffer->load(listVertices, sizeVertex, sizeList);
+		vertexBuffer->load(*this->device, listVertices, sizeVertex, sizeList);
 
 		return vertexBuffer;
 	}
 
-	D3D12DeviceContext* D3D12RenderSystem::getDXContext()
+	D3D12Device* D3D12RenderSystem::getDevice()
 	{
-		return this->deviceContext;
+		return this->device;
+	}
+
+	D3D12CommandContext* D3D12RenderSystem::getDXContext()
+	{
+		return this->commandContext;
 	}
 
 	IDXGIFactory7* D3D12RenderSystem::getDXFactory()
@@ -42,7 +49,7 @@ namespace Anito
 	{
 		if (P_SHARED_INSTANCE)
 		{
-			Logger::debug("D3D12 Render System already created");
+			Logger::error("D3D12 Render System already created");
 			return false;
 		}
 		P_SHARED_INSTANCE = new D3D12RenderSystem(useWarpDevice);
@@ -110,43 +117,12 @@ namespace Anito
 			}
 		}
 
-		ID3D12Device10* device;
-		hr = D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device));
-		Logger::logHResult(this, hr);
-		if (FAILED(hr))
-		{
-			Logger::error(this, "Device not created successfully");
-		}
-
-		D3D_FEATURE_LEVEL featureLevels[] =
-		{
-			D3D_FEATURE_LEVEL_12_2,
-			D3D_FEATURE_LEVEL_12_1,
-			D3D_FEATURE_LEVEL_12_0,
-			D3D_FEATURE_LEVEL_11_1,
-			D3D_FEATURE_LEVEL_11_0,
-		};
-
-		D3D12_FEATURE_DATA_FEATURE_LEVELS featLevels =
-		{
-			_countof(featureLevels), featureLevels, D3D_FEATURE_LEVEL_11_0
-		};
-
-		this->featureLevel = D3D_FEATURE_LEVEL_11_0;
-		
-		hr = device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS,
-			&featLevels, sizeof(featLevels));
-
-		if (SUCCEEDED(hr))
-		{
-			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
-		}
-
-		this->deviceContext = new D3D12DeviceContext(device);
+		this->device = new D3D12Device(this->dxgiAdapter);
+		this->commandContext = new D3D12CommandContext(*this->device);
 
 		//this->device->QueryInterface(IID_PPV_ARGS(&this->dxgiDevice));
 
-		if (this->deviceContext == nullptr)
+		if (this->commandContext == nullptr)
 		{
 			Logger::debug(this, "Device Context is null");
 		}
@@ -155,7 +131,8 @@ namespace Anito
 
 	D3D12RenderSystem::~D3D12RenderSystem()
 	{
-		delete this->deviceContext;
+		delete this->commandContext;
+		delete this->device;
 
 		this->dxgiAdapter->Release();
 		this->dxgiFactory->Release();

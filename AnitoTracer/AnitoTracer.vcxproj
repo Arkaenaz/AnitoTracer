@@ -96,10 +96,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Buffer.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Device.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12Resource.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12PipelineState.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12VertexBuffer.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12DebugLayer.cpp" />
-    <ClCompile Include="Source\Runtime\D3D12\D3D12DeviceContext.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12CommandContext.cpp" />
     <ClCompile Include="Source\Platform\EditorWindow.cpp" />
     <ClCompile Include="Source\main.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AnitoTracerPCH.h</PrecompiledHeaderFile>
@@ -110,6 +113,9 @@
     <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Buffer.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Device.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12Resource.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12PipelineState.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12VertexBuffer.h" />
     <ClInclude Include="Resources\resource.h" />
@@ -125,7 +131,7 @@
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_root_signature.h" />
     <ClInclude Include="Source\Libraries\D3DX12\d3dx12_state_object.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12DebugLayer.h" />
-    <ClInclude Include="Source\Runtime\D3D12\D3D12DeviceContext.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12CommandContext.h" />
     <ClInclude Include="Source\Platform\EditorWindow.h" />
     <ClInclude Include="Source\Common\Logger.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12RenderSystem.h" />

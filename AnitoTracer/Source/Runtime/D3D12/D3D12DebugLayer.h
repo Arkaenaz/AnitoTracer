@@ -22,7 +22,7 @@ namespace Anito
 
 		D3D12DebugLayer();
 		~D3D12DebugLayer();
-		D3D12DebugLayer(D3D12DebugLayer const&);
-		D3D12DebugLayer& operator = (D3D12DebugLayer const&);
+		D3D12DebugLayer(D3D12DebugLayer const&) {}
+		D3D12DebugLayer& operator = (D3D12DebugLayer const&) {}
 	};
 }
