@@ -54,6 +54,9 @@
     <Filter Include="Source\Engine\D3D12\RenderSystem\Resource\Buffer">
       <UniqueIdentifier>{5f40ef26-5282-4b00-878c-8d3e601b2121}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\PipelineState\GraphicsPipeline">
+      <UniqueIdentifier>{d09cb777-99b1-47c5-b7fb-01698c5f4e12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\EditorWindow.cpp">
@@ -91,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12Resource.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\PipelineState\GraphicsPipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12Resource.h">
       <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\PipelineState\GraphicsPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

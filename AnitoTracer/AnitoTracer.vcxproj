@@ -96,6 +96,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12Buffer.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12Device.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12Resource.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12Buffer.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12Device.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12Resource.h" />

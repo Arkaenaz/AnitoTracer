@@ -3,7 +3,7 @@
 
 namespace Anito
 {
-	D3D12VertexBuffer::D3D12VertexBuffer(D3D12RenderSystem* system) : system(system)
+	D3D12VertexBuffer::D3D12VertexBuffer()
 	{
 	}
 

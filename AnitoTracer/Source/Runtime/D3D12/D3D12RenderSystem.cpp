@@ -11,15 +11,15 @@ namespace Anito
 	}
 
 	// TODO : Create Custom Rasterizer States and Blend States
-	D3D12PipelineState* D3D12RenderSystem::createPipelineState()
+	D3D12PipelineState* D3D12RenderSystem::createPipelineState(const D3D12GraphicsPipeline& graphicsPipeline)
 	{
-		return new D3D12PipelineState(this);
+		return new D3D12PipelineState(*this->device, graphicsPipeline);
 	}
 
 	D3D12VertexBuffer* D3D12RenderSystem::createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList)
 	{
 		D3D12VertexBuffer* vertexBuffer = nullptr;
-		vertexBuffer = new D3D12VertexBuffer(this);
+		vertexBuffer = new D3D12VertexBuffer();
 		vertexBuffer->load(*this->device, listVertices, sizeVertex, sizeList);
 
 		return vertexBuffer;

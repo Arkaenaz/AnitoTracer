@@ -9,7 +9,8 @@ namespace Anito
 	}
 	D3D12Resource::~D3D12Resource()
 	{
-		this->resource->Release();
+		if (this->resource)
+			this->resource->Release();
 	}
 
 	ID3D12Resource2* D3D12Resource::get() const

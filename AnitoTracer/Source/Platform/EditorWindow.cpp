@@ -33,7 +33,7 @@ namespace Anito
 		// Resets and Reinitializes Command List
 		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
 
-		cmdList->SetGraphicsRootSignature(this->pipelineState->getRootSignature());
+		cmdList->SetGraphicsRootSignature(this->rootSignature);
 		renderSystem->getDXContext()->setViewportSize(width, height);
 
 		// Begin Frame
@@ -62,6 +62,13 @@ namespace Anito
 	{
 		Window::onDestroy();
 
+		this->pixelShader->Release();
+		this->vertexShader->Release();
+		this->rootSignature->Release();
+		if (this->signature)
+			this->signature->Release();
+		if (this->error)
+			this->error->Release();
 		delete this->vertexBuffer;
 		delete this->swapChain;
 		delete this->pipelineState;
@@ -86,8 +93,32 @@ namespace Anito
 
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
+		this->graphicsPipeline = D3D12GraphicsPipeline();
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &this->signature, &this->error);
+		renderSystem->getDevice()->get()->CreateRootSignature(0, this->signature->GetBufferPointer(), this->signature->GetBufferSize(), IID_PPV_ARGS(&this->rootSignature));
+
+#if defined(_DEBUG)
+		// Enable better shader debugging with the graphics debugging tools.
+		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+		UINT compileFlags = 0;
+#endif
+
+		std::wstring fullPath = std::filesystem::absolute(L"Source/shaders.hlsl");
+		Logger::log(fullPath);
+		D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &this->vertexShader, nullptr);
+		D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &this->pixelShader, nullptr);
+		
+		this->graphicsPipeline.setRootSignature(this->rootSignature);
+		this->graphicsPipeline.setVertexShader(CD3DX12_SHADER_BYTECODE(this->vertexShader));
+		this->graphicsPipeline.setPixelShader(CD3DX12_SHADER_BYTECODE(this->pixelShader));
+
 		// Initialize Pipeline State
-		this->pipelineState = renderSystem->createPipelineState();
+		this->pipelineState = renderSystem->createPipelineState(this->graphicsPipeline);
 
 		// Initialize the Swap Chain
 		RECT windowRect = this->getClientWindowRect();

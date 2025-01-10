@@ -1,15 +1,13 @@
 #pragma once
 
 #include "D3D12Buffer.h"
-#include "D3D12RenderSystem.h"
 
 namespace Anito
 {
-	class D3D12RenderSystem;
 	class D3D12VertexBuffer
 	{
 	public:
-		D3D12VertexBuffer(D3D12RenderSystem* system);
+		D3D12VertexBuffer();
 		~D3D12VertexBuffer();
 		D3D12VertexBuffer(const D3D12VertexBuffer&) = delete;
 		D3D12VertexBuffer& operator=(const D3D12VertexBuffer&) = delete;
@@ -18,8 +16,6 @@ namespace Anito
 		D3D12_VERTEX_BUFFER_VIEW getVertexBufferView();
 
 	private:
-		D3D12RenderSystem* system = nullptr;
-
 		UINT vertexBufferSize;
 
 		D3D12Buffer* vertexBuffer;

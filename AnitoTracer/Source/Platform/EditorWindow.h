@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Runtime/D3D12/D3D12GraphicsPipeline.h"
 #include "Runtime/D3D12/D3D12PipelineState.h"
 
 #include "Runtime/D3D12/D3D12SwapChain.h"
@@ -27,6 +28,12 @@ namespace Anito
 		D3D12VertexBuffer* vertexBuffer;
 		D3D12PipelineState* pipelineState;
 
+		D3D12GraphicsPipeline graphicsPipeline;
+		ID3D12RootSignature* rootSignature;
+		ID3D10Blob* vertexShader;
+		ID3D10Blob* pixelShader;
+		ID3D10Blob* signature;
+		ID3D10Blob* error;
 		struct vec3
 		{
 			float x, y, z;
