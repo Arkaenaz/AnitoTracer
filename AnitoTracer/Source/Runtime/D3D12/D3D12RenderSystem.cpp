@@ -38,14 +38,14 @@ namespace Anito
 		return P_SHARED_INSTANCE;
 	}
 
-	bool D3D12RenderSystem::initialize()
+	bool D3D12RenderSystem::initialize(bool useWarpDevice)
 	{
 		if (P_SHARED_INSTANCE)
 		{
 			Logger::debug("D3D12 Render System already created");
 			return false;
 		}
-		P_SHARED_INSTANCE = new D3D12RenderSystem();
+		P_SHARED_INSTANCE = new D3D12RenderSystem(useWarpDevice);
 	}
 
 	void D3D12RenderSystem::destroy()
@@ -54,39 +54,59 @@ namespace Anito
 	}
 
 	D3D12RenderSystem* D3D12RenderSystem::P_SHARED_INSTANCE = nullptr;
-	D3D12RenderSystem::D3D12RenderSystem()
+	D3D12RenderSystem::D3D12RenderSystem(bool useWarpDevice)
 	{
-		HRESULT hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&this->dxgiFactory));
+		// Create a factory
+		UINT createFactoryFlags = 0;
+
+#if defined(_DEBUG)
+		createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+#endif
+
+		HRESULT hr = CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&this->dxgiFactory));
 		Logger::logHResult(this, hr);
 		if (FAILED(hr))
 		{
 			Logger::error(this, "DXGIFactory not created successfully");
 		}
 
-		for (UINT adapterIndex = 0; SUCCEEDED(this->dxgiFactory->EnumAdapterByGpuPreference(
-				adapterIndex,
-				DXGI_GPU_PREFERENCE_UNSPECIFIED, 
-				IID_PPV_ARGS(&this->dxgiAdapter)));
-			++adapterIndex)
+		// Query for an adapter
+		if (useWarpDevice)
 		{
-			DXGI_ADAPTER_DESC3 desc;
-			hr = this->dxgiAdapter->GetDesc3(&desc);
-
-			if (FAILED(hr))
-				continue;
-
-			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-			{
-				// Don't select the Basic Render Driver adapter.
-				continue;
-			}
-
+			hr = this->dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter));
 			// Check to see if the adapter supports Direct3D 12,
 			// but don't create the actual device yet.
 			if (SUCCEEDED(D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device10), nullptr)))
 			{
 				Logger::debug(this, "Device is supported");
-				break;
+			}
+		}
+		else {
+			for (UINT adapterIndex = 0; SUCCEEDED(this->dxgiFactory->EnumAdapterByGpuPreference(
+				adapterIndex,
+				DXGI_GPU_PREFERENCE_UNSPECIFIED,
+				IID_PPV_ARGS(&this->dxgiAdapter)));
+				++adapterIndex)
+			{
+				DXGI_ADAPTER_DESC3 desc;
+				hr = this->dxgiAdapter->GetDesc3(&desc);
+
+				if (FAILED(hr))
+					continue;
+
+				if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+				{
+					// Don't select the Basic Render Driver adapter.
+					continue;
+				}
+
+				// Check to see if the adapter supports Direct3D 12,
+				// but don't create the actual device yet.
+				if (SUCCEEDED(D3D12CreateDevice(this->dxgiAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device10), nullptr)))
+				{
+					Logger::debug(this, "Device is supported");
+					break;
+				}
 			}
 		}
 

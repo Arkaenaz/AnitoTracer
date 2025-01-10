@@ -8,6 +8,16 @@ namespace Anito
 	D3D12DeviceContext::D3D12DeviceContext(ID3D12Device10* device) :
 		device(device)
 	{
+#if defined(_DEBUG)
+		ID3D12InfoQueue* infoQueue;
+		if (SUCCEEDED(this->device->QueryInterface(&infoQueue)))
+		{
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
+			//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
+		}
+#endif
+
 		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
 		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;

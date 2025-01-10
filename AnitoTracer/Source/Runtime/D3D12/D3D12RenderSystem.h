@@ -32,13 +32,13 @@ namespace Anito
 
 	public:
 		static D3D12RenderSystem* getInstance();
-		static bool initialize();
+		static bool initialize(bool useWarpDevice = false);
 		static void destroy();
 
 	private:
 		static D3D12RenderSystem* P_SHARED_INSTANCE;
 
-		D3D12RenderSystem();
+		D3D12RenderSystem(bool useWarpDevice = false);
 		~D3D12RenderSystem();
 		D3D12RenderSystem(D3D12RenderSystem const&) {}
 		D3D12RenderSystem& operator = (D3D12RenderSystem const&) {}
