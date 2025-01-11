@@ -25,9 +25,9 @@ namespace Anito
 	{
 #ifdef _DEBUG
 		// Initialize D3D12 Debug Layer
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&this->d3d12Debug))))
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&this->debugController))))
 		{
-			this->d3d12Debug->EnableDebugLayer();
+			this->debugController->EnableDebugLayer();
 			Logger::debug(this, "Enabled D3D12 Debug Layer");
 		}
 		// Initialize DXGI Debug Layer
@@ -36,6 +36,14 @@ namespace Anito
 			this->dxgiDebug->EnableLeakTrackingForThread();
 			Logger::debug(this, "Enabled DXGI Leak Tracking for Thread");
 		}
+
+		IDXGIInfoQueue* dxgiInfoQueue;
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiInfoQueue))))
+		{
+			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+		}
+		dxgiInfoQueue->Release();
 #endif
 		Logger::debug(this, "Initialized");
 	}
@@ -50,7 +58,7 @@ namespace Anito
 			);
 		}
 		this->dxgiDebug->Release();
-		this->d3d12Debug->Release();
+		this->debugController->Release();
 #endif
 		P_SHARED_INSTANCE = nullptr;
 		Logger::debug(this, "Destroyed");

@@ -8,7 +8,7 @@ namespace Anito
 		
 	private:
 #ifdef _DEBUG
-		ID3D12Debug6* d3d12Debug;
+		ID3D12Debug6* debugController;
 		IDXGIDebug1* dxgiDebug;
 #endif
 
