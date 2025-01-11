@@ -36,5 +36,6 @@ namespace Anito
 		ID3D12DescriptorHeap* renderTargetViewHeap;
 		UINT rtvDescriptorSize;
 		D3D12Resource* renderTargets[FrameCount];
+		UINT swapChainFlags = 0;
 	};
 }

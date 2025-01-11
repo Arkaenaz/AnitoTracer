@@ -15,6 +15,7 @@ namespace Anito
 		virtual void onCreate() override;
 		virtual void onUpdate() override;
 		virtual void onRender() override;
+		virtual void onResize(UINT width, UINT height) override;
 		virtual void onDestroy() override;
 		virtual void onFocus() override;
 		virtual void onKillFocus() override;

@@ -12,6 +12,13 @@ LRESULT CALLBACK WndProc(HWND windowHandle, UINT msg, WPARAM wParam, LPARAM lPar
 		{
 			return 0;
 		}
+		Window* window = (Window*)GetWindowLongPtr(windowHandle, GWLP_USERDATA);
+		if (window)
+		{
+			RECT clientRect = {};
+			GetClientRect(windowHandle, &clientRect);
+			window->onResize(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
+		}
 		break;
 		}
 	case WM_CREATE:
@@ -153,6 +160,10 @@ namespace Anito {
 	void Window::onDestroy()
 	{
 		this->isRunning = false;
+	}
+
+	void Window::onResize(UINT width, UINT height)
+	{
 	}
 
 	void Window::onFocus()

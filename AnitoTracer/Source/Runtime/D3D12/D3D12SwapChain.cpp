@@ -12,7 +12,7 @@ namespace Anito
 
 		// Check if Tearing is supported
 		BOOL allowTearing = true;
-		UINT swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		this->swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		if (FAILED(system->getDXFactory()->CheckFeatureSupport(
 			DXGI_FEATURE_PRESENT_ALLOW_TEARING,
 			&allowTearing, sizeof(allowTearing))))
@@ -25,7 +25,7 @@ namespace Anito
 			Logger::debug(this, "Tearing is supported");
 		}
 
-		swapChainFlags |= allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+		this->swapChainFlags |= allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
 		// Create the swap chain for the window indicated by HWND parameter
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -41,7 +41,7 @@ namespace Anito
 		swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-		swapChainDesc.Flags = swapChainFlags;
+		swapChainDesc.Flags = this->swapChainFlags;
 
 		IDXGISwapChain1* swapChain;
 		HRESULT hr = system->getDXFactory()->CreateSwapChainForHwnd(deviceContext->getCommandQueue(),
@@ -91,6 +91,8 @@ namespace Anito
 				this->renderTargets[i] = new D3D12Resource(renderTarget);
 				device.get()->CreateRenderTargetView(this->renderTargets[i]->get(), nullptr, rtvHandle);
 				rtvHandle.Offset(1, this->rtvDescriptorSize);
+				std::wstring name = L"Anito Render Target " + std::to_wstring(i);
+				this->renderTargets[i]->get()->SetName(name.c_str());
 			}
 		}
 	}
@@ -110,30 +112,46 @@ namespace Anito
 		if (this->renderTargetViewHeap)
 		{
 			this->renderTargetViewHeap->Release();
-			this->renderTargetViewHeap = nullptr;
+		}
+		for (size_t i = 0; i < FrameCount; i++)
+		{
+			delete this->renderTargets[i];
 		}
 	}
 
 	void D3D12SwapChain::resizeBuffers(UINT width, UINT height)
 	{
-		this->swapChain->ResizeBuffers(FrameCount, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-		//m_renderTexture->resizeResources(width, height);
-		//m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		this->swapChain->ResizeBuffers(FrameCount, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, this->swapChainFlags);
 	}
 
 	void D3D12SwapChain::createRenderTarget()
 	{
-		/*ID3D11Texture2D* buffer = NULL;
-		HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+		{
+			// Describe and create a render target view (RTV) descriptor heap.
+			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+			rtvHeapDesc.NumDescriptors = FrameCount;
+			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-		if (!Logger::log(this, result))
-			Logger::throw_exception("Swap Chain Fail");
+			if (SUCCEEDED(device.get()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap))))
+			{
+				this->rtvDescriptorSize = device.get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+			}
+		}
 
-		result = this->m_system->m_D3DDevice->CreateRenderTargetView(buffer, NULL, &m_renderTexture->m_renderTargetView);
-		if (!Logger::log(this, result))
-			Logger::throw_exception("Render Target View not created successfully.");
+		{
+			CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart());
 
-		buffer->Release();*/
+			// Create a RTV for each frame.
+			for (size_t i = 0; i < FrameCount; i++)
+			{
+				ID3D12Resource2* renderTarget;
+				this->swapChain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(&renderTarget));
+				this->renderTargets[i] = new D3D12Resource(renderTarget);
+				device.get()->CreateRenderTargetView(this->renderTargets[i]->get(), nullptr, rtvHandle);
+				rtvHandle.Offset(1, this->rtvDescriptorSize);
+			}
+		}
 	}
 
 	bool D3D12SwapChain::present(bool vsync)

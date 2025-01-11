@@ -17,6 +17,15 @@ namespace Anito
 			Logger::debug(this, "Device created successfully");
 		}
 
+#ifdef _DEBUG
+		if (SUCCEEDED(this->device->QueryInterface(&infoQueue)))
+		{
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
+			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
+			//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
+		}
+#endif
+
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
 			D3D_FEATURE_LEVEL_12_2,
@@ -40,16 +49,6 @@ namespace Anito
 		{
 			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
 		}
-
-#ifdef _DEBUG
-		if (SUCCEEDED(this->device->QueryInterface(&infoQueue)))
-		{
-			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
-			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
-			//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
-		}
-#endif
-		
 	}
 
 	D3D12Device::~D3D12Device()

@@ -22,7 +22,7 @@ namespace Anito
 
 	void EditorWindow::onRender()
 	{
-		Window::onUpdate();
+		Window::onRender();
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
 		RECT windowRect = this->getClientWindowRect();
@@ -55,6 +55,17 @@ namespace Anito
 
 		this->swapChain->present(false);
 
+		renderSystem->getDXContext()->moveToNextFrame(this->swapChain);
+	}
+
+	void EditorWindow::onResize(UINT width, UINT height)
+	{
+		Window::onResize(width, height);
+		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
+
+		this->swapChain->cleanRenderTarget();
+		this->swapChain->resizeBuffers(width, height);
+		this->swapChain->createRenderTarget();
 		renderSystem->getDXContext()->moveToNextFrame(this->swapChain);
 	}
 

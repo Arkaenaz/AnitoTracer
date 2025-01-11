@@ -12,6 +12,7 @@ namespace Anito
 		virtual void onUpdate();
 		virtual void onRender();
 		virtual void onDestroy();
+		virtual void onResize(UINT width, UINT height);
 		virtual void onFocus();
 		virtual void onKillFocus();
 
