@@ -24,7 +24,7 @@ namespace Anito
 
 		this->vertexBuffer->copyFromCPU(listVertices, this->vertexBufferSize);
 
-        this->vertexBufferView.BufferLocation = this->vertexBuffer->get()->GetGPUVirtualAddress();
+        this->vertexBufferView.BufferLocation = this->vertexBuffer->getGPUVirtualAddress();
         this->vertexBufferView.StrideInBytes = sizeVertex;
         this->vertexBufferView.SizeInBytes = this->vertexBufferSize;
 	}

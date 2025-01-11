@@ -53,6 +53,7 @@ namespace Anito
 			return false;
 		}
 		P_SHARED_INSTANCE = new D3D12RenderSystem(useWarpDevice);
+		return true;
 	}
 
 	void D3D12RenderSystem::destroy()

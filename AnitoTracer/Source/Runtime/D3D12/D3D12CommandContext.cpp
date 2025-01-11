@@ -160,22 +160,22 @@ namespace Anito
 		/*m_deviceContext->ClearDepthStencilView(renderTexture->m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);*/
 	}
 
-	void D3D12CommandContext::setViewportSize(UINT width, UINT height)
+	void D3D12CommandContext::setViewportSize(FLOAT width, FLOAT height)
 	{
 		//TODO : Move this into a Graphics Pipeline Class
 		D3D12_VIEWPORT vp = {};
 		vp.TopLeftX = 0.0f;
 		vp.TopLeftY = 0.0f;
-		vp.Width = (FLOAT)width;
-		vp.Height = (FLOAT)height;
+		vp.Width = width;
+		vp.Height = height;
 		vp.MinDepth = 0.0f;
 		vp.MaxDepth = 1.0f;
 		this->commandList->RSSetViewports(1, &vp);
 
 		RECT scRect;
-		scRect.left = scRect.top = 0.0f;
-		scRect.right = (FLOAT)width;
-		scRect.bottom = (FLOAT)height;
+		scRect.left = scRect.top = 0l;
+		scRect.right = static_cast<LONG>(width);
+		scRect.bottom = static_cast<LONG>(height);
 		this->commandList->RSSetScissorRects(1, &scRect);
 	}
 

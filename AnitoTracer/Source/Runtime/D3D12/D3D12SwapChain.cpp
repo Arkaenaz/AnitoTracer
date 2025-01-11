@@ -85,7 +85,7 @@ namespace Anito
 			for (size_t i = 0; i < FrameCount; i++)
 			{
 				ID3D12Resource2* renderTarget;
-				this->swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTarget));
+				this->swapChain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(&renderTarget));
 				this->renderTargets[i] = new D3D12Resource(renderTarget);
 				device.get()->CreateRenderTargetView(this->renderTargets[i]->get(), nullptr, rtvHandle);
 				rtvHandle.Offset(1, this->rtvDescriptorSize);
