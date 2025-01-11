@@ -84,8 +84,10 @@ namespace Anito
 			// Create a RTV for each frame.
 			for (size_t i = 0; i < FrameCount; i++)
 			{
-				this->swapChain->GetBuffer(i, IID_PPV_ARGS(&this->renderTargets[i]));
-				device.get()->CreateRenderTargetView(this->renderTargets[i], nullptr, rtvHandle);
+				ID3D12Resource2* renderTarget;
+				this->swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTarget));
+				this->renderTargets[i] = new D3D12Resource(renderTarget);
+				device.get()->CreateRenderTargetView(this->renderTargets[i]->get(), nullptr, rtvHandle);
 				rtvHandle.Offset(1, this->rtvDescriptorSize);
 			}
 		}
@@ -95,7 +97,7 @@ namespace Anito
 	{
 		for (size_t i = 0; i < ARRAYSIZE(this->renderTargets); i++)
 		{
-			this->renderTargets[i]->Release();
+			delete this->renderTargets[i];
 		}
 		this->renderTargetViewHeap->Release();
 		this->swapChain->Release();
@@ -153,8 +155,13 @@ namespace Anito
 		return this->rtvDescriptorSize;
 	}
 
-	ID3D12Resource2* D3D12SwapChain::getRenderTarget(UINT frameIndex)
+	D3D12Resource* D3D12SwapChain::getRenderTarget(UINT frameIndex)
 	{
 		return this->renderTargets[frameIndex];
+	}
+
+	D3D12Resource* D3D12SwapChain::getCurrentRenderTarget()
+	{
+		return this->renderTargets[this->frameIndex];
 	}
 }

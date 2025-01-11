@@ -37,7 +37,7 @@ namespace Anito
 		renderSystem->getDXContext()->setViewportSize(width, height);
 
 		// Begin Frame
-		this->beginFrame(cmdList);
+		renderSystem->getDXContext()->beginFrame(this->swapChain->getCurrentRenderTarget());
 
 		// Populate command list
 		renderSystem->getDXContext()->clearRenderTargetColor(this->swapChain, 0.207, 0.145, 0.223, 1);
@@ -48,7 +48,7 @@ namespace Anito
 		cmdList->DrawInstanced(3, 1, 0, 0);
 
 		// End Frame
-		this->endFrame(cmdList);
+		renderSystem->getDXContext()->endFrame(this->swapChain->getCurrentRenderTarget());
 
 		// Executes command list
 		renderSystem->getDXContext()->executeCommandList();
@@ -145,23 +145,5 @@ namespace Anito
 		cmdList->Close();
 
 		Logger::debug(this, "Initialized Engine");
-	}
-
-	void EditorWindow::beginFrame(ID3D12GraphicsCommandList7* cmdList)
-	{
-		UINT frameIndex = this->swapChain->getFrameIndex();
-
-		// Indicate that the back buffer will be used as a render target.
-		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(this->swapChain->getRenderTarget(frameIndex), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		cmdList->ResourceBarrier(1, &barrier);
-	}
-
-	void EditorWindow::endFrame(ID3D12GraphicsCommandList7* cmdList)
-	{
-		UINT frameIndex = this->swapChain->getFrameIndex();
-
-		// Indicate that the back buffer will now be used to present.
-		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(this->swapChain->getRenderTarget(frameIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-		cmdList->ResourceBarrier(1, &barrier);
 	}
 }

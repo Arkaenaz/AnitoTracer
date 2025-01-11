@@ -92,7 +92,7 @@ namespace Anito
 
 	D3D12Buffer::D3D12Buffer(ID3D12Resource2* resource) : D3D12Resource(resource)
 	{
-
+		this->gpuVirtualAddress = this->resource->GetGPUVirtualAddress();
 	}
 
 	D3D12Buffer::~D3D12Buffer()

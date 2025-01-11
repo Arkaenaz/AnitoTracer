@@ -17,4 +17,9 @@ namespace Anito
 	{
 		return this->resource;
 	}
+
+	D3D12_GPU_VIRTUAL_ADDRESS D3D12Resource::getGPUVirtualAddress()
+	{
+		return this->gpuVirtualAddress;
+	}
 }

@@ -83,10 +83,24 @@ namespace Anito
 		this->fenceValues[frameIndex]++;
 	}
 
+	void D3D12CommandContext::beginFrame(D3D12Resource* renderTarget)
+	{
+		// Indicate that the back buffer will be used as a render target.
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(renderTarget->get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		this->commandList->ResourceBarrier(1, &barrier);
+	}
+
+	void D3D12CommandContext::endFrame(D3D12Resource* renderTarget)
+	{
+		// Indicate that the back buffer will now be used to present.
+		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(renderTarget->get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		this->commandList->ResourceBarrier(1, &barrier);
+	}
+
 	// Prepare to render the next frame.
 	void D3D12CommandContext::moveToNextFrame(D3D12SwapChain* swapChain)
 	{
-		const UINT frameIndex = swapChain->getFrameIndex();
+		UINT frameIndex = swapChain->getFrameIndex();
 		// Schedule a Signal command in the queue.
 		const UINT64 currentFenceValue = this->fenceValues[frameIndex];
 		if (FAILED(this->commandQueue->Signal(this->fence, currentFenceValue)))
@@ -98,6 +112,7 @@ namespace Anito
 
 		// Update the frame index.
 		swapChain->updateFrameIndex();
+		frameIndex = swapChain->getFrameIndex();
 
 		// If the next frame is not ready to be rendered yet, wait until it is ready.
 		if (this->fence->GetCompletedValue() < this->fenceValues[frameIndex])

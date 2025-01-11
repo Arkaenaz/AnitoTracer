@@ -21,7 +21,8 @@ namespace Anito
 		void updateFrameIndex();
 		UINT getFrameIndex();
 		UINT getRTVDescriptorSize();
-		ID3D12Resource2* getRenderTarget(UINT frameIndex);
+		D3D12Resource* getRenderTarget(UINT frameIndex);
+		D3D12Resource* getCurrentRenderTarget();
 
 	private:
 		const D3D12Device& device;
@@ -34,6 +35,6 @@ namespace Anito
 		IDXGISwapChain4* swapChain;
 		ID3D12DescriptorHeap* renderTargetViewHeap;
 		UINT rtvDescriptorSize;
-		ID3D12Resource2* renderTargets[FrameCount];
+		D3D12Resource* renderTargets[FrameCount];
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "D3D12Device.h"
+#include "D3D12Resource.h"
 
 namespace Anito
 {
@@ -14,6 +15,8 @@ namespace Anito
 		D3D12CommandContext& operator=(const D3D12CommandContext&) = delete;
 
 		void signalAndWaitForGpu(UINT frameIndex);
+		void beginFrame(D3D12Resource* renderTarget);
+		void endFrame(D3D12Resource* renderTarget);
 		void moveToNextFrame(D3D12SwapChain* swapChain);
 
 		ID3D12GraphicsCommandList10* initCommandList(UINT frameIndex, ID3D12PipelineState* pipelineState);
