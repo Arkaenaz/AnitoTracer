@@ -2,8 +2,14 @@
 
 #define NOMINMAX
 
-#include <filesystem>
+#define NODRAWTEXT
+#define NOGDI
+#define NOBITMAP
+
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+
+#include <filesystem>
 
 #include <d3d12.h>
 #include <dxgi1_6.h>

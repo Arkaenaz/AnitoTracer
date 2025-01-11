@@ -15,6 +15,9 @@ namespace Anito
 
 	private:
 		ID3D12Device10* device;
+#ifdef _DEBUG
+		ID3D12InfoQueue* infoQueue;
+#endif
 		D3D_FEATURE_LEVEL featureLevel;
 	};
 }

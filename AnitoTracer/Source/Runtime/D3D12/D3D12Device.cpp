@@ -41,17 +41,22 @@ namespace Anito
 			this->featureLevel = featLevels.MaxSupportedFeatureLevel;
 		}
 
-		ID3D12InfoQueue* infoQueue;
+#ifdef _DEBUG
 		if (SUCCEEDED(this->device->QueryInterface(&infoQueue)))
 		{
 			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
 			infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
 			//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
 		}
+#endif
+		
 	}
 
 	D3D12Device::~D3D12Device()
 	{
+#ifdef _DEBUG
+		this->infoQueue->Release();
+#endif
 		this->device->Release();
 	}
 

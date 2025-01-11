@@ -58,6 +58,8 @@ namespace Anito
 
 		system->getDXFactory()->MakeWindowAssociation(handle, DXGI_MWA_NO_ALT_ENTER);
 		swapChain->QueryInterface(&this->swapChain);
+		swapChain->Release();
+
 		this->frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 		{
 			// Describe and create a render target view (RTV) descriptor heap.
