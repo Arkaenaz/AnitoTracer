@@ -4,11 +4,7 @@
 int main()
 {
 	Anito::EditorWindow* editorWindow = new Anito::EditorWindow();
-
-	while (editorWindow->running())
-	{
-		editorWindow->broadcast();
-	}
+	editorWindow->run();
 
 	return 0;
 }

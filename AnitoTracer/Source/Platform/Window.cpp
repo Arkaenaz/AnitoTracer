@@ -106,33 +106,26 @@ namespace Anito {
 	{
 	}
 
-	bool Window::broadcast()
+	bool Window::run()
 	{
-		if (!this->isInitialized)
+		SetWindowLongPtr(this->windowHandle, GWLP_USERDATA, (LONG_PTR)this);
+		this->onCreate();
+
+		while (this->isRunning)
 		{
-			SetWindowLongPtr(this->windowHandle, GWLP_USERDATA, (LONG_PTR)this);
-			this->onCreate();
-			this->isInitialized = true;
+			this->onUpdate();
+			this->onRender();
+			MSG msg;
+			while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+
+			Sleep(1);
 		}
-
-		this->onUpdate();
-		this->onRender();
-
-		MSG msg;
-		while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		Sleep(1);
 
 		return true;
-	}
-
-	bool Window::running()
-	{
-		return this->isRunning;
 	}
 
 	RECT Window::getClientWindowRect()

@@ -16,8 +16,7 @@ namespace Anito
 		virtual void onFocus();
 		virtual void onKillFocus();
 
-		bool broadcast();
-		bool running();
+		bool run();
 
 		RECT getClientWindowRect();
 
