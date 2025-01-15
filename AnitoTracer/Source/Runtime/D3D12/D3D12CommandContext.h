@@ -1,5 +1,6 @@
 #pragma once
 
+#include "D3D12CommandQueue.h"
 #include "D3D12Device.h"
 #include "D3D12Resource.h"
 
@@ -26,14 +27,18 @@ namespace Anito
 		void setViewportSize(FLOAT width, FLOAT height);
 		void copyBufferRegion(ID3D12Resource* destination, UINT64 destinationOffset, ID3D12Resource* source, UINT64 sourceOffset, UINT64 numBytes);
 
-		ID3D12CommandQueue* getCommandQueue();
+		D3D12CommandQueue* getCommandQueue();
 
 	private:
-		ID3D12CommandQueue* commandQueue;
+		void signal(UINT64 fenceValue);
+		void waitForFenceValue(UINT frameIndex, UINT64 fenceValue);
+
+		D3D12CommandQueue* commandQueue;
 		ID3D12CommandAllocator* commandAllocators[2];
 		ID3D12GraphicsCommandList10* commandList;
 
 		ID3D12Fence1* fence;
+		UINT64 currentFenceValue = 0;
 		UINT64 fenceValues[2];
 		HANDLE fenceEvent = nullptr;
 	};

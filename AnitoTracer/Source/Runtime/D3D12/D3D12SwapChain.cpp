@@ -44,7 +44,7 @@ namespace Anito
 		swapChainDesc.Flags = this->swapChainFlags;
 
 		IDXGISwapChain1* swapChain;
-		HRESULT hr = system->getDXFactory()->CreateSwapChainForHwnd(deviceContext->getCommandQueue(),
+		HRESULT hr = system->getDXFactory()->CreateSwapChainForHwnd(deviceContext->getCommandQueue()->get(),
 			handle, &swapChainDesc, nullptr, nullptr, &swapChain);
 
 		if (SUCCEEDED(hr))

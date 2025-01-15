@@ -18,6 +18,7 @@ namespace Anito
 	void EditorWindow::onUpdate()
 	{
 		Window::onUpdate();
+
 	}
 
 	void EditorWindow::onRender()
@@ -73,7 +74,9 @@ namespace Anito
 	{
 		Window::onDestroy();
 		D3D12RenderSystem::getInstance()->getDXContext()->signalAndWaitForGpu(this->swapChain->getFrameIndex());
-		
+		this->swapChain->updateFrameIndex();
+		D3D12RenderSystem::getInstance()->getDXContext()->signalAndWaitForGpu(this->swapChain->getFrameIndex());
+
 		delete this->vertexBuffer;
 		delete this->swapChain;
 		delete this->pipelineState;

@@ -2,24 +2,15 @@
 #include "D3D12CommandContext.h"
 
 #include "D3D12SwapChain.h"
+#include "D3D12CommandQueue.h"
 
 namespace Anito
 {
 	D3D12CommandContext::D3D12CommandContext(const D3D12Device& device)
 	{
-		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
-		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-		cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;
-		cmdQueueDesc.NodeMask = 0;
-		cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+		this->commandQueue = new D3D12CommandQueue(device);
 
-		if (SUCCEEDED(device.get()->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&this->commandQueue))))
-		{
-			Logger::debug(this, "Command Queue created successfully");
-		}
-
-
-		if (SUCCEEDED(device.get()->CreateFence(this->fenceValues[0], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
+		if (SUCCEEDED(device.get()->CreateFence(this->currentFenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->fence))))
 		{
 			Logger::debug(this, "Fence created successfully");
 		}
@@ -56,31 +47,21 @@ namespace Anito
 			CloseHandle(this->fenceEvent);
 		}
 		this->fence->Release();
-		this->commandQueue->Release();
+		delete this->commandQueue;
 	}
 
 	// Wait for pending GPU work to complete.
 	void D3D12CommandContext::signalAndWaitForGpu(UINT frameIndex)
 	{
 		// Schedule a Signal command in the queue.
-		if (FAILED(this->commandQueue->Signal(this->fence, this->fenceValues[frameIndex])))
-		{
-			// Should Exit or Throw an error
-			Logger::throw_exception("Wait for GPU signal failed");
-			return;
-		}
-		// Wait until the fence has been processed.
-		if (FAILED(this->fence->SetEventOnCompletion(this->fenceValues[frameIndex], this->fenceEvent)))
-		{
-			// Should Exit or Throw an error
-			Logger::throw_exception("Wait for GPU fence event completion failed");
-			return;	
-		}
+		signal(this->currentFenceValue);
 
-		WaitForSingleObjectEx(this->fenceEvent, INFINITE, false);
+		// Wait until the fence has been processed.
+		this->waitForFenceValue(frameIndex, this->currentFenceValue);
 
 		// Increment the fence value for the current frame.
-		this->fenceValues[frameIndex]++;
+		this->currentFenceValue++;
+		this->fenceValues[frameIndex] = this->currentFenceValue++;
 	}
 
 	void D3D12CommandContext::beginFrame(D3D12Resource* renderTarget)
@@ -97,37 +78,24 @@ namespace Anito
 		this->commandList->ResourceBarrier(1, &barrier);
 	}
 
+	// TODO: Let me know if I can do delegates :3
 	// Prepare to render the next frame.
 	void D3D12CommandContext::moveToNextFrame(D3D12SwapChain* swapChain)
 	{
 		UINT frameIndex = swapChain->getFrameIndex();
 		// Schedule a Signal command in the queue.
-		const UINT64 currentFenceValue = this->fenceValues[frameIndex];
-		if (FAILED(this->commandQueue->Signal(this->fence, currentFenceValue)))
-		{
-			// Should Exit or Throw an error
-			Logger::throw_exception("Move to next frame signal failed");
-			return;
-		}
+		signal(this->currentFenceValue);
 
-		// Update the frame index.
+		// Update the frame index, so we wait if the next frame is ready.
 		swapChain->updateFrameIndex();
 		frameIndex = swapChain->getFrameIndex();
 
 		// If the next frame is not ready to be rendered yet, wait until it is ready.
-		if (this->fence->GetCompletedValue() < this->fenceValues[frameIndex])
-		{
-			if(FAILED(this->fence->SetEventOnCompletion(this->fenceValues[frameIndex], this->fenceEvent)))
-			{
-				// Should Exit or Throw an error
-				Logger::throw_exception("Move to next frame fence event completion failed");
-				return;
-			}
-			WaitForSingleObjectEx(this->fenceEvent, INFINITE, FALSE);
-		}
+		this->waitForFenceValue(frameIndex, this->currentFenceValue);
 
 		// Set the fence value for the next frame.
-		this->fenceValues[frameIndex] = currentFenceValue + 1;
+		this->currentFenceValue++;
+		this->fenceValues[frameIndex] = this->currentFenceValue;
 	}
 
 	ID3D12GraphicsCommandList10* D3D12CommandContext::initCommandList(UINT frameIndex, ID3D12PipelineState* pipelineState)
@@ -142,8 +110,8 @@ namespace Anito
 	{
 		if (SUCCEEDED(this->commandList->Close()))
 		{
-			ID3D12CommandList* lists[] = { this->commandList };
-			this->commandQueue->ExecuteCommandLists(_countof(lists), lists);
+			std::vector<ID3D12CommandList*> lists = { this->commandList };
+			this->commandQueue->execute(lists);
 		}
 	}
 
@@ -185,8 +153,31 @@ namespace Anito
 		this->commandList->CopyBufferRegion(destination, destinationOffset, source, sourceOffset, numBytes);
 	}
 
-	ID3D12CommandQueue* D3D12CommandContext::getCommandQueue()
+	D3D12CommandQueue* D3D12CommandContext::getCommandQueue()
 	{
 		return this->commandQueue;
+	}
+
+	void D3D12CommandContext::signal(UINT64 fenceValue)
+	{
+		if (FAILED(this->commandQueue->get()->Signal(this->fence, fenceValue)))
+		{
+			// Should Exit or Throw an error
+			Logger::throw_exception("Signal failed.");
+		}
+	}
+
+	void D3D12CommandContext::waitForFenceValue(UINT frameIndex, UINT64 fenceValue)
+	{
+		if (this->fence->GetCompletedValue() < this->fenceValues[frameIndex])
+		{
+			if (FAILED(this->fence->SetEventOnCompletion(this->fenceValues[frameIndex], this->fenceEvent)))
+			{
+				// Should Exit or Throw an error
+				Logger::throw_exception("Waiting for fence value failed.");
+				return;
+			}
+			WaitForSingleObjectEx(this->fenceEvent, INFINITE, FALSE);
+		}
 	}
 }
