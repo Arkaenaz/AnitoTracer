@@ -60,6 +60,9 @@
     <Filter Include="Source\Engine\D3D12\RenderSystem\CommandContext\CommandQueue">
       <UniqueIdentifier>{bcfd7db4-2fff-464a-b5c2-6f1028869747}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\D3D12\RenderSystem\IndexBuffer">
+      <UniqueIdentifier>{653bdf87-6ae3-4542-9a96-317989cf660d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\EditorWindow.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12CommandQueue.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\CommandContext\CommandQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12IndexBuffer.cpp">
+      <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12CommandQueue.h">
       <Filter>Source\Engine\D3D12\RenderSystem\CommandContext\CommandQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\D3D12IndexBuffer.h">
+      <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

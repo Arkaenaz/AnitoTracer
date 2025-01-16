@@ -35,7 +35,11 @@ namespace Anito
 		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
 
 		cmdList->SetGraphicsRootSignature(this->rootSignature);
-		renderSystem->getDXContext()->setViewportSize(width, height);
+
+		if (width >= 0.0f && height >= 0.0f)
+		{
+			renderSystem->getDXContext()->setViewportSize(width, height);
+		}
 
 		// Begin Frame
 		renderSystem->getDXContext()->beginFrame(this->swapChain->getCurrentRenderTarget());

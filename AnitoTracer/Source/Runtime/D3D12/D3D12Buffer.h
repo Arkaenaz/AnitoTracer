@@ -12,6 +12,7 @@ namespace Anito
 	{
 	public:
 		static D3D12Buffer* createVertexBuffer(const D3D12Device& device, UINT size);
+		static D3D12Buffer* createIndexBuffer(const D3D12Device& device, UINT size);
 		//static D3D12Buffer* createUploadBuffer(const D3D12Device& device, UINT size);
 
 		D3D12Buffer(ID3D12Resource2* resource);

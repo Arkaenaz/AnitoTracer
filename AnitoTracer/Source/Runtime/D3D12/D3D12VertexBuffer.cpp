@@ -1,6 +1,8 @@
 #include "AnitoTracerPCH.h"
 #include "D3D12VertexBuffer.h"
 
+#include "D3D12RenderSystem.h"
+
 namespace Anito
 {
 	D3D12VertexBuffer::D3D12VertexBuffer()
@@ -17,10 +19,10 @@ namespace Anito
         this->vertexBufferSize = sizeVertex * sizeList;
 
 		this->vertexBuffer = D3D12Buffer::createVertexBuffer(device, this->vertexBufferSize);
-
+		this->vertexBuffer->get()->SetName(L"Vertex Buffer");
         // TODO : Readd upload buffer when you know how to make it and when you know how to copy over buffers
 
-		//this->uploadBuffer = D3D12Buffer::createUploadBuffer(*device, this->vertexBufferSize);
+		//this->uploadBuffer = D3D12Buffer::createUploadBuffer(device, 64 * 1024);
 
 		this->vertexBuffer->copyFromCPU(listVertices, this->vertexBufferSize);
 
