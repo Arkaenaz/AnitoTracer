@@ -48,16 +48,38 @@ namespace Anito
         }
 
         template <class T>
-        static void logHResult(T* sender, const HRESULT hr)
+        static bool logHResult(T* sender, const HRESULT hr)
         {
+            bool boolResult = true;
+
             if (FAILED(hr))
             {
+                boolResult = false;
                 const std::string msg = std::system_category().message(hr);
                 debug(sender, msg);
             }
 
             if (SUCCESS_LOGS)
                 debug(sender, "Operation was successful.");
+
+            return boolResult;
+        }
+
+        static bool logHResult(const std::string& msg, const HRESULT hr)
+        {
+            bool boolResult = true;
+
+            if (FAILED(hr))
+            {
+                boolResult = false;
+                const std::string result = std::system_category().message(hr);
+                debug(msg + "; " + result);
+            }
+
+            if (SUCCESS_LOGS)
+                debug("Operation was successful.");
+
+            return boolResult;
         }
 
         template <class T>

@@ -25,20 +25,20 @@ namespace Anito
 	{
 #ifdef _DEBUG
 		// Initialize D3D12 Debug Layer
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&this->debugController))))
+		if (Logger::logHResult(this, D3D12GetDebugInterface(IID_PPV_ARGS(&this->debugController))))
 		{
 			this->debugController->EnableDebugLayer();
 			Logger::debug(this, "Enabled D3D12 Debug Layer");
 		}
 		// Initialize DXGI Debug Layer
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&this->dxgiDebug))))
+		if (Logger::logHResult(this, DXGIGetDebugInterface1(0, IID_PPV_ARGS(&this->dxgiDebug))))
 		{
 			this->dxgiDebug->EnableLeakTrackingForThread();
 			Logger::debug(this, "Enabled DXGI Leak Tracking for Thread");
 		}
 
 		IDXGIInfoQueue* dxgiInfoQueue;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiInfoQueue))))
+		if (Logger::logHResult(this, DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiInfoQueue))))
 		{
 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
