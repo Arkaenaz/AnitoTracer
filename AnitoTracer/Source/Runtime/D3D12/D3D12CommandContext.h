@@ -27,6 +27,8 @@ namespace Anito
 		void setViewportSize(FLOAT width, FLOAT height);
 		void copyBufferRegion(ID3D12Resource* destination, UINT64 destinationOffset, ID3D12Resource* source, UINT64 sourceOffset, UINT64 numBytes);
 
+		void resetFenceValues();
+
 		D3D12CommandQueue* getCommandQueue();
 
 	private:

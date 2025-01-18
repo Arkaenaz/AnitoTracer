@@ -84,6 +84,7 @@ namespace Anito
 	{
 		UINT frameIndex = swapChain->getFrameIndex();
 		// Schedule a Signal command in the queue.
+
 		signal(this->currentFenceValue);
 
 		// Update the frame index, so we wait if the next frame is ready.
@@ -117,12 +118,9 @@ namespace Anito
 
 	void D3D12CommandContext::clearRenderTargetColor(D3D12SwapChain* swapChain, float red, float green, float blue, float alpha)
 	{
-		UINT frameIndex = swapChain->getFrameIndex();
-		UINT rtvDescriptorSize = swapChain->getRTVDescriptorSize();
-
 		FLOAT clearColor[] = { red, green, blue, alpha };
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(swapChain->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle = swapChain->getRenderTargetViewHandle();
 		this->commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 		this->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		/*m_deviceContext->ClearDepthStencilView(renderTexture->m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);*/
@@ -136,8 +134,8 @@ namespace Anito
 		vp.TopLeftY = 0.0f;
 		vp.Width = width;
 		vp.Height = height;
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
+		vp.MinDepth = D3D12_MIN_DEPTH;
+		vp.MaxDepth = D3D12_MAX_DEPTH;
 		this->commandList->RSSetViewports(1, &vp);
 
 		RECT scRect;
@@ -151,6 +149,14 @@ namespace Anito
 		ID3D12Resource* source, UINT64 sourceOffset, UINT64 numBytes)
 	{
 		this->commandList->CopyBufferRegion(destination, destinationOffset, source, sourceOffset, numBytes);
+	}
+
+	void D3D12CommandContext::resetFenceValues()
+	{
+		for (size_t i = 0; i < 2; i++)
+		{
+			this->fenceValues[i] = this->currentFenceValue;
+		}
 	}
 
 	D3D12CommandQueue* D3D12CommandContext::getCommandQueue()

@@ -148,7 +148,12 @@ namespace Anito
 				ID3D12Resource2* renderTarget;
 				this->swapChain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(&renderTarget));
 				this->renderTargets[i] = new D3D12Resource(renderTarget);
+
 				device.get()->CreateRenderTargetView(this->renderTargets[i]->get(), nullptr, rtvHandle);
+
+				std::wstring name = L"Anito Render Target " + std::to_wstring(i);
+				this->renderTargets[i]->get()->SetName(name.c_str());
+
 				rtvHandle.Offset(1, this->rtvDescriptorSize);
 			}
 		}
@@ -183,5 +188,10 @@ namespace Anito
 	D3D12Resource* D3D12SwapChain::getCurrentRenderTarget()
 	{
 		return this->renderTargets[this->frameIndex];
+	}
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE D3D12SwapChain::getRenderTargetViewHandle()
+	{
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE({ this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart(), static_cast<INT>(this->frameIndex), this->rtvDescriptorSize });
 	}
 }

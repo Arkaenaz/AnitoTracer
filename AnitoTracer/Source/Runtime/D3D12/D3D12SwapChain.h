@@ -23,6 +23,7 @@ namespace Anito
 		UINT getRTVDescriptorSize();
 		D3D12Resource* getRenderTarget(UINT frameIndex);
 		D3D12Resource* getCurrentRenderTarget();
+		CD3DX12_CPU_DESCRIPTOR_HANDLE getRenderTargetViewHandle();
 
 	private:
 		const D3D12Device& device;

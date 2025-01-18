@@ -28,7 +28,9 @@ namespace Anito
 
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
+#if defined(NTDDI_WIN10_FE) || defined(USING_D3D12_AGILITY_SDK)
 			D3D_FEATURE_LEVEL_12_2,
+#endif
 			D3D_FEATURE_LEVEL_12_1,
 			D3D_FEATURE_LEVEL_12_0,
 			D3D_FEATURE_LEVEL_11_1,

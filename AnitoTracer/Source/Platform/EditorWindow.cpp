@@ -69,6 +69,7 @@ namespace Anito
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
 		this->swapChain->cleanRenderTarget();
+		renderSystem->getDXContext()->resetFenceValues();
 		this->swapChain->resizeBuffers(width, height);
 		this->swapChain->createRenderTarget();
 		renderSystem->getDXContext()->moveToNextFrame(this->swapChain);
