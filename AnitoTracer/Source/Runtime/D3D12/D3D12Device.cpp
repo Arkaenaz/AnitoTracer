@@ -61,8 +61,16 @@ namespace Anito
 		this->device->Release();
 	}
 
+	
+/*#if defined(NTDDI_WIN11_ZN)
 	ID3D12Device10* D3D12Device::get() const
 	{
 		return this->device;
 	}
+#else*/
+	ID3D12Device9* D3D12Device::get() const
+	{
+		return this->device;
+	}
+//#endif
 }

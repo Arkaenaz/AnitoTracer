@@ -34,9 +34,15 @@ namespace Anito
 
 		ID3D12Resource2* buffer = nullptr;
 
-		HRESULT hr = device.get()->CreateCommittedResource3(
-			&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED,
-			nullptr, nullptr, 0, nullptr, IID_PPV_ARGS(&buffer));
+		/*#if defined(NTDDI_WIN11_ZN)
+				HRESULT hr = device.get()->CreateCommittedResource3(
+					&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED,
+					nullptr, nullptr, 0, nullptr, IID_PPV_ARGS(&buffer));
+		#else*/
+		HRESULT hr = device.get()->CreateCommittedResource2(
+			&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, nullptr, IID_PPV_ARGS(&buffer));
+		//#endif
 
 		if (SUCCEEDED(hr))
 		{
@@ -81,9 +87,16 @@ namespace Anito
 
 		ID3D12Resource2* buffer = nullptr;
 
+/*#if defined(NTDDI_WIN11_ZN)
 		HRESULT hr = device.get()->CreateCommittedResource3(
 			&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED,
 			nullptr, nullptr, 0, nullptr, IID_PPV_ARGS(&buffer));
+#else*/
+		HRESULT hr = device.get()->CreateCommittedResource2(
+			&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, nullptr, IID_PPV_ARGS(&buffer));
+//#endif
+		
 
 		if (SUCCEEDED(hr))
 		{

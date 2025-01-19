@@ -4,11 +4,13 @@ namespace Anito
 {
 	class D3D12DebugLayer
 	{
-	public:
-		
 	private:
 #ifdef _DEBUG
+/*#if defined(NTDDI_WIN11_ZN)
 		ID3D12Debug6* debugController;
+#else*/
+		ID3D12Debug5* debugController;
+//#endif
 		IDXGIDebug1* dxgiDebug;
 #endif
 
