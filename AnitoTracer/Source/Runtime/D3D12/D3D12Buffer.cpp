@@ -110,6 +110,42 @@ namespace Anito
 		return new D3D12Buffer(buffer);
 	}
 
+	D3D12Buffer* D3D12Buffer::createConstantBuffer(const D3D12Device& device, UINT size)
+	{
+		D3D12_RESOURCE_DESC1 bufDesc{};
+		bufDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		bufDesc.Alignment = 0;
+		bufDesc.Width = size;
+		bufDesc.Height = 1;
+		bufDesc.DepthOrArraySize = 1;
+		bufDesc.MipLevels = 1;
+		bufDesc.Format = DXGI_FORMAT_UNKNOWN;
+		bufDesc.SampleDesc.Count = 1;
+		bufDesc.SampleDesc.Quality = 0;
+		bufDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		bufDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+		D3D12_HEAP_PROPERTIES uploadHeap{};
+		uploadHeap.Type = D3D12_HEAP_TYPE_UPLOAD;
+		uploadHeap.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		uploadHeap.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		uploadHeap.CreationNodeMask = 0;
+		uploadHeap.VisibleNodeMask = 0;
+
+		ID3D12Resource2* buffer = nullptr;
+
+		HRESULT hr = device.get()->CreateCommittedResource2(
+			&uploadHeap, D3D12_HEAP_FLAG_NONE, &bufDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, nullptr, IID_PPV_ARGS(&buffer));
+
+		if (SUCCEEDED(hr))
+			Logger::debug("Index Buffer created successfully");
+		else
+			Logger::error("Index Buffer not created successfully");
+
+		return new D3D12Buffer(buffer);
+	}
+
 	/*D3D12Buffer* D3D12Buffer::createUploadBuffer(const D3D12Device& device, UINT size)
 	{
 		D3D12_RESOURCE_DESC1 resourceDesc{};
