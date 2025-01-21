@@ -30,3 +30,6 @@
 
 #include "Common/Logger.h"
 #include "Common/Time.h"
+
+// DirectXToolKit
+#include "Libraries/DirectXTK/SimpleMath.h"
