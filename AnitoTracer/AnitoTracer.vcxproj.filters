@@ -205,4 +205,15 @@
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\PixelShader.hlsl">
+      <Filter>Source\Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\shaders.hlsl">
+      <Filter>Source\Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\VertexShader.hlsl">
+      <Filter>Source\Engine</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

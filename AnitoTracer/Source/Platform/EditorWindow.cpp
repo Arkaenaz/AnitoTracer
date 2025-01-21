@@ -133,10 +133,12 @@ namespace Anito
 		ID3D10Blob* vertexShader;
 		ID3D10Blob* pixelShader;
 
-		std::wstring fullPath = std::filesystem::absolute(L"Source/shaders.hlsl");
-		Logger::log(fullPath);
-		D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
-		D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
+		std::wstring psPath = std::filesystem::absolute(L"Source/PixelShader.hlsl");
+		Logger::log(psPath);
+		std::wstring vsPath = std::filesystem::absolute(L"Source/VertexShader.hlsl");
+		Logger::log(vsPath);
+		D3DCompileFromFile(vsPath.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
+		D3DCompileFromFile(psPath.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
 
 		D3D12_SHADER_BYTECODE vertexShaderByteCode = CD3DX12_SHADER_BYTECODE(vertexShader);
 		D3D12_SHADER_BYTECODE pixelShaderByteCode = CD3DX12_SHADER_BYTECODE(pixelShader);
