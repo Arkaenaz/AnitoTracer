@@ -30,3 +30,4 @@
 
 #include "Common/Logger.h"
 #include "Common/Time.h"
+#include "Common/Structs.h"

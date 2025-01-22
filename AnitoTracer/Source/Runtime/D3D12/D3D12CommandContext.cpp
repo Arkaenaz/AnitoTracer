@@ -164,6 +164,11 @@ namespace Anito
 		return this->commandQueue;
 	}
 
+	ID3D12GraphicsCommandList10* D3D12CommandContext::getCommandList()
+	{
+		return this->commandList;
+	}
+
 	void D3D12CommandContext::signal(UINT64 fenceValue)
 	{
 		if (FAILED(this->commandQueue->get()->Signal(this->fence, fenceValue)))

@@ -30,6 +30,7 @@ namespace Anito
 		void resetFenceValues();
 
 		D3D12CommandQueue* getCommandQueue();
+		ID3D12GraphicsCommandList10* getCommandList();
 
 	private:
 		void signal(UINT64 fenceValue);

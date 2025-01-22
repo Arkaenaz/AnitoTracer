@@ -63,6 +63,9 @@
     <Filter Include="Source\Engine\D3D12\RenderSystem\IndexBuffer">
       <UniqueIdentifier>{653bdf87-6ae3-4542-9a96-317989cf660d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\Primitives">
+      <UniqueIdentifier>{b9babe2b-da2f-4241-9c4b-f50af7b8756b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Platform\EditorWindow.cpp">
@@ -109,6 +112,18 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12IndexBuffer.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitives\GameObject.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\D3D12ConstantBuffer.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitives\2D\Quad.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitives\GameObjectManager.cpp">
+      <Filter>Source\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +214,13 @@
     <ClInclude Include="Source\Runtime\D3D12\D3D12IndexBuffer.h">
       <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Primitives\GameObject.h" />
+    <ClInclude Include="Source\Primitives\PrimitivesInclude.h" />
+    <ClInclude Include="Source\Primitives\PrimitivesList.h" />
+    <ClInclude Include="Source\Common\Structs.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12ConstantBuffer.h" />
+    <ClInclude Include="Source\Primitives\2D\Quad.h" />
+    <ClInclude Include="Source\Primitives\GameObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\AnitoTracer.rc">

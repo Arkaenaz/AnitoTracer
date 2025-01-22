@@ -96,6 +96,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Primitives\2D\Quad.cpp" />
+    <ClCompile Include="Source\Primitives\GameObject.cpp" />
+    <ClCompile Include="Source\Primitives\GameObjectManager.cpp" />
+    <ClCompile Include="Source\Runtime\D3D12\D3D12ConstantBuffer.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12IndexBuffer.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12CommandQueue.cpp" />
     <ClCompile Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.cpp" />
@@ -116,6 +120,13 @@
     <ClCompile Include="Source\Platform\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Primitives\2D\Quad.h" />
+    <ClInclude Include="Source\Primitives\GameObject.h" />
+    <ClInclude Include="Source\Primitives\GameObjectManager.h" />
+    <ClInclude Include="Source\Primitives\PrimitivesInclude.h" />
+    <ClInclude Include="Source\Primitives\PrimitivesList.h" />
+    <ClInclude Include="Source\Common\Structs.h" />
+    <ClInclude Include="Source\Runtime\D3D12\D3D12ConstantBuffer.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12IndexBuffer.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12CommandQueue.h" />
     <ClInclude Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.h" />

@@ -25,6 +25,15 @@ namespace Anito
 		return vertexBuffer;
 	}
 
+	D3D12ConstantBuffer* D3D12RenderSystem::createConstantBuffer(void* buffer, UINT sizeBuffer)
+	{
+		D3D12ConstantBuffer* constantBuffer = nullptr;
+		constantBuffer = new D3D12ConstantBuffer();
+		constantBuffer->load(*this->device, buffer, sizeBuffer);
+
+		return constantBuffer;
+	}
+
 	D3D12Device* D3D12RenderSystem::getDevice()
 	{
 		return this->device;

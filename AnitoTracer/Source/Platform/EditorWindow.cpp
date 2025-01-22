@@ -46,11 +46,9 @@ namespace Anito
 
 		// Populate command list
 		renderSystem->getDXContext()->clearRenderTargetColor(this->swapChain, 0.207f, 0.145f, 0.223f, 1);
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView = this->vertexBuffer->getVertexBufferView();
-		cmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
-		cmdList->DrawInstanced(3, 1, 0, 0);
+		this->quad->draw();
+		//GameObjectManager::getInstance()->render();
 
 		// End Frame
 		renderSystem->getDXContext()->endFrame(this->swapChain->getCurrentRenderTarget());
@@ -164,15 +162,8 @@ namespace Anito
 		// Start up the command list for other initialization
 		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
 
-		Vertex triangleVertices[] =
-		{
-			{ { 0.0f, 0.25f * (width / height), 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-			{ { 0.25f, -0.25f * (width / height), 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-			{ { -0.25f, -0.25f * (width / height), 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
-		};
-
-		// Create Vertex Buffer
-		this->vertexBuffer = renderSystem->createVertexBuffer(triangleVertices, sizeof(Vertex), ARRAYSIZE(triangleVertices));
+		this->quad = new Quad("Quad", Vector2(width, height));
+		//GameObjectManager::getInstance()->addGameObject(ObjectType::quad);
 
 		// Close the command list
 		cmdList->Close();

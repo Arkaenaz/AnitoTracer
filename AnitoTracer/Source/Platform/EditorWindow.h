@@ -7,6 +7,8 @@
 #include "Runtime/D3D12/D3D12SwapChain.h"
 #include "Runtime/D3D12/D3D12VertexBuffer.h"
 
+#include "Primitives/GameObjectManager.h"
+
 namespace Anito
 {
 	class EditorWindow : public Window
@@ -29,21 +31,7 @@ namespace Anito
 
 		D3D12GraphicsPipeline graphicsPipeline;
 		ID3D12RootSignature* rootSignature;
-		
-		struct vec3
-		{
-			float x, y, z;
-		};
 
-		struct vec4
-		{
-			float x, y, z, w;
-		};
-
-		struct Vertex
-		{
-			vec3 position;
-			vec4 color;
-		};
+		Quad* quad;
 	};
 }
