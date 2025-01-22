@@ -47,8 +47,8 @@ namespace Anito
 		// Populate command list
 		renderSystem->getDXContext()->clearRenderTargetColor(this->swapChain, 0.207f, 0.145f, 0.223f, 1);
 
-		this->quad->draw();
-		//GameObjectManager::getInstance()->render();
+		//this->quad->draw();
+		GameObjectManager::getInstance()->render();
 
 		// End Frame
 		renderSystem->getDXContext()->endFrame(this->swapChain->getCurrentRenderTarget());
@@ -102,6 +102,7 @@ namespace Anito
 	{
 		D3D12DebugLayer::initialize();
 		D3D12RenderSystem::initialize();
+		GameObjectManager::initialize();
 
 		D3D12RenderSystem* renderSystem = D3D12RenderSystem::getInstance();
 
@@ -162,8 +163,8 @@ namespace Anito
 		// Start up the command list for other initialization
 		auto* cmdList = renderSystem->getDXContext()->initCommandList(this->swapChain->getFrameIndex(), this->pipelineState->getDXState());
 
-		this->quad = new Quad("Quad", Vector2(width, height));
-		//GameObjectManager::getInstance()->addGameObject(ObjectType::quad);
+		//this->quad = new Quad("Quad", Vector2(width, height));
+		GameObjectManager::getInstance()->addGameObject(ObjectType::quad);
 
 		// Close the command list
 		cmdList->Close();

@@ -75,16 +75,16 @@ namespace Anito {
 
 	Quad* GameObjectManager::createQuad(ObjectType type, Vector2 size)
 	{
-		//std::cout << "[GO Manager] : Creating Quad." << std::endl;
-		////Quad* newQuad = new Quad("Quad " + std::to_string(this->GOList.size()), size);
-		//std::cout << "[GO Manager] : Quad created." << std::endl;
+		std::cout << "[GO Manager] : Creating Quad." << std::endl;
+		Quad* quad = new Quad("Quad " + std::to_string(this->GOList.size()), size);
+		std::cout << "[GO Manager] : Quad created: " << quad->getName() << std::endl;
 		
-		//this->GOList.push_back((GameObject*)newQuad);
-		////quadCounter++;
-		//std::cout << "[GO Manager] : Quad added to list." << std::endl;
+		this->GOList.push_back((GameObject*)quad);
+		//quadCounter++;
+		std::cout << "[GO Manager] : Quad added to list." << std::endl;
 
-		Quad* quad = new Quad("Quad", size);
-		std::cout << "[GO Manager] : Creating Quad." + quad->getName() << std::endl;
+		/*Quad* quad = new Quad("Quad", size);
+		std::cout << "[GO Manager] : Creating Quad." + quad->getName() << std::endl;*/
 
 		return quad;
 	}
@@ -295,7 +295,7 @@ namespace Anito {
 	{
 		if (P_SHARED_INSTANCE)
 		{
-			Logger::error("D3D12 Render System already created");
+			Logger::error("Game Object Manager already created");
 			return false;
 		}
 		P_SHARED_INSTANCE = new GameObjectManager();
