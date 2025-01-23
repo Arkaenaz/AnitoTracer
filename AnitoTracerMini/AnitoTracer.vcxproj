@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <RootNamespace>AnitoTracer</RootNamespace>
+    <ProjectGuid>{C427D882-AE8E-49BB-82A6-164385799499}</ProjectGuid>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>AnitoTracer</ProjectName>
+    <PlatformToolset>v142</PlatformToolset>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <TargetRuntime>Native</TargetRuntime>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <EmbedManifest>false</EmbedManifest>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\MiniEngine\PropertySheets\Build.props" />
+    <Import Project="..\MiniEngine\PropertySheets\Desktop.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Output\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Output\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Output\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile />
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\MiniEngine\Core;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions Condition="'$(Configuration)'=='Debug'">/nodefaultlib:MSVCRT %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)
+	  </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../MiniEngine/Core/Core.vcxproj">
+      <Project>{86A58508-0D6A-4786-A32F-01A301FDC6F3}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Logo.png" />
+    <Image Include="Resources\Logo44.png" />
+    <Image Include="Resources\SmallLogo.png" />
+    <Image Include="Resources\SplashScreen.png" />
+    <Image Include="Resources\StoreLogo.png" />
+    <Image Include="Resources\WideLogo.png" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalLibraryDirectories>..\Packages\zlib-msvc-x64.1.2.11.8900\build\native\lib_debug\zlibstaticd.lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;runtimeobject.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ClCompile>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ClCompile>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\Packages\WinPixEventRuntime.1.0.210209001\build\WinPixEventRuntime.targets" Condition="Exists('..\Packages\WinPixEventRuntime.1.0.210209001\build\WinPixEventRuntime.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\Packages\zlib-msvc-x64.1.2.11.8900\build\native\zlib-msvc-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\zlib-msvc-x64.1.2.11.8900\build\native\zlib-msvc-x64.targets'))" />
+    <Error Condition="!Exists('..\Packages\WinPixEventRuntime.1.0.210209001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\WinPixEventRuntime.1.0.210209001\build\WinPixEventRuntime.targets'))" />
+  </Target>
+</Project>
