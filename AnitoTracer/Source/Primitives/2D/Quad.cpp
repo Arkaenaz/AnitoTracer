@@ -39,13 +39,4 @@ namespace Anito
 		cmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
 		cmdList->DrawInstanced(3, 1, 0, 0);
 	}
-
-	void Quad::render(ID3D12GraphicsCommandList10* cmdList)
-	{
-		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView = this->vb->getVertexBufferView();
-		cmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
-		cmdList->DrawInstanced(3, 1, 0, 0);
-	}
 }
