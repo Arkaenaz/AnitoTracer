@@ -12,15 +12,24 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{06dcf987-d5c3-489b-aa0a-88d547a323d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Primitives">
+      <UniqueIdentifier>{348d74f4-000b-4d50-81c1-38e66e7cdae9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\pch.cpp" />
+    <ClCompile Include="Primitive.cpp">
+      <Filter>Source Files\Primitives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\pch.h" />
+    <ClInclude Include="Primitive.h">
+      <Filter>Source Files\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Logo.png">
