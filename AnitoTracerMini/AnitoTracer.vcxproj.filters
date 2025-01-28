@@ -21,18 +21,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\pch.cpp" />
-    <ClCompile Include="Primitive.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Primitive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\pch.h" />
-    <ClInclude Include="Primitive.h">
-      <Filter>Source Files\Primitives</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Primitive.h" />
   </ItemGroup>
   <ItemGroup>
