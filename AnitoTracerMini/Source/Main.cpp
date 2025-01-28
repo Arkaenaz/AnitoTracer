@@ -14,6 +14,10 @@ using namespace GameCore;
 using namespace Graphics;
 using namespace Math;
 
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
+
+
 class AnitoTracer : public GameCore::IGameApp
 {
 public:
@@ -65,7 +69,7 @@ void AnitoTracer::Startup(void)
     cube = new Primitive("primitive cube", Primitive::CUBE, &rootSignature);
 
     camera.SetZRange(1.0f, 10000.0f);
-    cameraController = new FlyingFPSCamera(camera, Vector3(kYUnitVector));
+    cameraController = new FlyingFPSCamera(camera, Math::Vector3(kYUnitVector));
 }
 
 void AnitoTracer::Cleanup(void)
@@ -117,7 +121,7 @@ void AnitoTracer::Update(float deltaT)
 
     cameraController->Update(deltaT);
 
-    camera.SetEyeAtUp({ x, y, z }, Vector3(kZero), Vector3(kYUnitVector));
+    camera.SetEyeAtUp({ x, y, z }, Math::Vector3(kZero), Math::Vector3(kYUnitVector));
     camera.Update();
 
     viewProjMatrix = camera.GetViewProjMatrix();
