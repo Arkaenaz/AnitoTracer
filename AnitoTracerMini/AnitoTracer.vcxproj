@@ -66,15 +66,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Primitive.h" />
     <ClInclude Include="Source\pch.h" />
+    <ClInclude Include="Source\Primitive.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Primitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../MiniEngine/Core/Core.vcxproj">

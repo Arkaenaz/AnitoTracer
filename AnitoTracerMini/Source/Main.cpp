@@ -6,7 +6,7 @@
 #include "RootSignature.h"
 #include "Camera.h"
 
-#include "Primitives/Primitive.h"
+#include "Primitive.h"
 
 #include "CameraController.h"
 
@@ -34,9 +34,6 @@ public:
 
 private:
     RootSignature rootSignature;
-    StructuredBuffer vertexBuffer;
-    ByteAddressBuffer indexBuffer;
-    GraphicsPSO graphicsPSO;
 
     Camera camera;
     FlyingFPSCamera* cameraController;

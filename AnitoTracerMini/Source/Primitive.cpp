@@ -13,7 +13,7 @@ using namespace Math;
 Primitive::Primitive(std::string name, ObjectType type, RootSignature* rs)
 {
     this->rootSignature = rs;
-	this->init(type);
+    this->init(type);
 }
 
 Primitive::~Primitive()
@@ -25,14 +25,14 @@ Primitive::~Primitive()
 
 void Primitive::init(ObjectType type)
 {
-	switch (type)
-	{
-		case CUBE:
-			this->createCube();
-			break;
-		default:
-			break;
-	}
+    switch (type)
+    {
+    case CUBE:
+        this->createCube();
+        break;
+    default:
+        break;
+    }
 }
 
 void Primitive::createCube()
