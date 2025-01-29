@@ -15,6 +15,9 @@
 #include "Math/BoundingBox.h"
 #include "Math/BoundingSphere.h"
 #include <cstdint>
+#include "Renderer.h"
+
+#include "Model.h"
 
 using namespace Math;
 
@@ -24,12 +27,27 @@ struct Vertex
 	XMFLOAT4 Color;
 };
 
+__declspec(align(256)) struct Constants
+{
+	Matrix4 World;         // Object to world
+	Matrix3 WorldIT;         // Object to world
+};
+
 class Primitive
 {
 public:
 	enum ObjectType { CUBE, SPHERE, PLANE, CYLINDER, CAPSULE };
 
-protected:
+	Primitive(std::string name, ObjectType type);
+	~Primitive();
+
+	virtual void CreateType(ObjectType type);
+	virtual void Update(float deltaTime, RECT viewport);
+	virtual void Render(GraphicsContext& context, Matrix4 viewMat);
+	virtual void Render(Renderer::MeshSorter& sorter,
+		const GpuBuffer& Constants,
+		const Math::AffineTransform sphereTransforms[]) const;
+
 	GraphicsPSO graphicsPSO;
 	StructuredBuffer vertexBuffer;
 	ByteAddressBuffer indexBuffer;
@@ -41,31 +59,50 @@ protected:
 
 	bool rendered = false;
 
-	Math::BoundingSphere m_BoundingSphere; // Object-space bounding sphere
-	Math::AxisAlignedBox m_BoundingBox;
+	BoundingSphere m_BoundingSphere; // Object-space bounding sphere
+	AxisAlignedBox m_BoundingBox;
 	ByteAddressBuffer m_DataBuffer;
-	ByteAddressBuffer m_MaterialConstants;
 	uint32_t m_NumNodes;
 	uint32_t m_NumMeshes;
-	uint32_t m_NumAnimations;
-	uint32_t m_NumJoints;
 	std::unique_ptr<uint8_t[]> m_MeshData;
-	std::vector<TextureRef> textures;
-	std::unique_ptr<uint16_t[]> m_JointIndices;
-	std::unique_ptr<Math::Matrix4[]> m_JointIBMs;
+	std::unique_ptr<GraphNode[]> m_SceneGraph;
 
-public:
-	Primitive(std::string name, ObjectType type);
-	~Primitive();
-
-	virtual void CreateType(ObjectType type);
+protected:
 	void CreateCube();
 	void CreateSphere();
 	void CreatePlane();
 	void CreateCylinder();
 	void CreateCapsule();
-
-	virtual void update(float deltaTime, RECT viewport);
-	virtual void draw(GraphicsContext& context, Matrix4 viewMat);
 };
 
+class PrimitiveInstance
+{
+public:
+	PrimitiveInstance() {}
+	~PrimitiveInstance() {
+		m_ConstantsCPU.Destroy();
+		m_ConstantsGPU.Destroy();
+	}
+	PrimitiveInstance(std::shared_ptr<const Primitive> sourcePrimitive);
+	PrimitiveInstance(const PrimitiveInstance& PrimitiveInstance);
+
+	PrimitiveInstance& operator=(std::shared_ptr<const Primitive> sourcePrimitive);
+
+	bool IsNull(void) const { return m_Primitive == nullptr; }
+
+	void Update(GraphicsContext& gfxContext, float deltaTime);
+	void Render(Renderer::MeshSorter& sorter) const;
+
+	void Resize(float newRadius);
+	Vector3 GetCenter() const;
+	Scalar GetRadius() const;
+	BoundingSphere GetBoundingSphere() const;
+	OrientedBox GetBoundingBox() const;
+
+private:
+	std::shared_ptr<const Primitive> m_Primitive;
+	UploadBuffer m_ConstantsCPU;
+	ByteAddressBuffer m_ConstantsGPU;
+	std::unique_ptr<Math::AffineTransform[]> m_BoundingSphereTransforms;
+	UniformTransform m_Locator;
+};

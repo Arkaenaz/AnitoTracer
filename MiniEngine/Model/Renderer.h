@@ -107,6 +107,10 @@ namespace Renderer
             D3D12_GPU_VIRTUAL_ADDRESS materialCBV,
             D3D12_GPU_VIRTUAL_ADDRESS bufferPtr,
             const Joint* skeleton = nullptr);
+        void AddMesh(const Mesh& mesh, float distance,
+            D3D12_GPU_VIRTUAL_ADDRESS meshCBV,
+            D3D12_GPU_VIRTUAL_ADDRESS bufferPtr,
+            const Joint* skeleton = nullptr);
 
         void Sort();
 

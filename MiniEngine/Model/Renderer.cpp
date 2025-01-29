@@ -532,6 +532,69 @@ void MeshSorter::AddMesh( const Mesh& mesh, float distance,
     m_SortObjects.push_back(object);
 }
 
+void MeshSorter::AddMesh(const Mesh& mesh, float distance,
+    D3D12_GPU_VIRTUAL_ADDRESS meshCBV,
+    D3D12_GPU_VIRTUAL_ADDRESS bufferPtr,
+    const Joint* skeleton)
+{
+    SortKey key;
+    key.value = m_SortObjects.size();
+
+    bool alphaBlend = (mesh.psoFlags & PSOFlags::kAlphaBlend) == PSOFlags::kAlphaBlend;
+    bool alphaTest = (mesh.psoFlags & PSOFlags::kAlphaTest) == PSOFlags::kAlphaTest;
+    bool skinned = (mesh.psoFlags & PSOFlags::kHasSkin) == PSOFlags::kHasSkin;
+    uint64_t depthPSO = (skinned ? 2 : 0) + (alphaTest ? 1 : 0);
+
+    union float_or_int { float f; uint32_t u; } dist;
+    dist.f = Max(distance, 0.0f);
+
+    if (m_BatchType == kShadows)
+    {
+        if (alphaBlend)
+            return;
+
+        key.passID = kZPass;
+        key.psoIdx = depthPSO + 4;
+        key.key = dist.u;
+        m_SortKeys.push_back(key.value);
+        m_PassCounts[kZPass]++;
+    }
+    else if (mesh.psoFlags & PSOFlags::kAlphaBlend)
+    {
+        key.passID = kTransparent;
+        key.psoIdx = mesh.pso;
+        key.key = ~dist.u;
+        m_SortKeys.push_back(key.value);
+        m_PassCounts[kTransparent]++;
+    }
+    else if (SeparateZPass || alphaTest)
+    {
+        key.passID = kZPass;
+        key.psoIdx = depthPSO;
+        key.key = dist.u;
+        m_SortKeys.push_back(key.value);
+        m_PassCounts[kZPass]++;
+
+        key.passID = kOpaque;
+        key.psoIdx = mesh.pso + 1;
+        key.key = dist.u;
+        m_SortKeys.push_back(key.value);
+        m_PassCounts[kOpaque]++;
+    }
+    else
+    {
+        key.passID = kOpaque;
+        key.psoIdx = mesh.pso;
+        key.key = dist.u;
+        m_SortKeys.push_back(key.value);
+        m_PassCounts[kOpaque]++;
+    }
+
+    SortObject object = { &mesh, skeleton, meshCBV, bufferPtr };
+    m_SortObjects.push_back(object);
+}
+
+
 void MeshSorter::Sort()
 {
     struct { bool operator()(uint64_t a, uint64_t b) const { return a < b; } } Cmp;
@@ -657,7 +720,7 @@ void MeshSorter::RenderMeshes(
             const Mesh& mesh = *object.mesh;
 
             context.SetConstantBuffer(kMeshConstants, object.meshCBV);
-            context.SetConstantBuffer(kMaterialConstants, object.materialCBV);
+			//context.SetConstantBuffer(kMaterialConstants, object.materialCBV);
             context.SetDescriptorTable(kMaterialSRVs, s_TextureHeap[mesh.srvTable]);
             context.SetDescriptorTable(kMaterialSamplers, s_SamplerHeap[mesh.samplerTable]);
             if (mesh.numJoints > 0)

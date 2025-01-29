@@ -9,9 +9,12 @@
 #include "Renderer.h"
 #include "CommandContext.h"
 
+#include "ConstantBuffers.h"
+
 using namespace DirectX;
 using namespace Graphics;
 using namespace Math;
+using namespace Renderer;
 
 Primitive::Primitive(std::string name, ObjectType type)
 {
@@ -37,7 +40,7 @@ Primitive::Primitive(std::string name, ObjectType type)
     D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr);
     D3DCompileFromFile(fullPath.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr);
 
-    /**/graphicsPSO.SetRootSignature(Renderer::m_RootSig);
+    graphicsPSO.SetRootSignature(Renderer::m_RootSig);
     graphicsPSO.SetRasterizerState(RasterizerDefault);
     graphicsPSO.SetBlendState(BlendDisable);
     graphicsPSO.SetDepthStencilState(DepthStateDisabled);
@@ -56,6 +59,12 @@ Primitive::~Primitive()
     // Free up resources in an orderly fashion
     vertexBuffer.Destroy();
     indexBuffer.Destroy();
+
+    m_BoundingSphere = BoundingSphere(kZero);
+    m_DataBuffer.Destroy();
+    m_NumNodes = 0;
+    m_NumMeshes = 0;
+    m_MeshData = nullptr;
 }
 
 void Primitive::CreateType(ObjectType type)
@@ -127,6 +136,12 @@ void Primitive::CreateCube()
 
     vertexBuffer.Create(L"vertex buff", vertices.size(), sizeof(Vertex), vertices.data());
     indexBuffer.Create(L"index buff", indices.size(), sizeof(std::uint16_t), indices.data());
+
+    this->m_NumNodes = 1;
+    this->m_SceneGraph.reset(new GraphNode[vertices.size()]);
+    this->m_NumMeshes = 1;
+    this->m_MeshData.reset(new uint8_t[indices.size() * sizeof(Vertex)]);
+	this->m_DataBuffer.Create(L"Model Data", vertices.size(), sizeof(Vertex), vertices.data());
 }
 
 void Primitive::CreateSphere()
@@ -255,7 +270,7 @@ void Primitive::CreateCapsule()
 //    indexBuffer.Create(L"index buff", indices.size(), sizeof(std::uint16_t), indices.data());
 }
 
-void Primitive::update(float deltaTime, RECT viewport)
+void Primitive::Update(float deltaTime, RECT viewport)
 {
     /*if (!rendered)
     {
@@ -265,7 +280,7 @@ void Primitive::update(float deltaTime, RECT viewport)
     }*/
 }
 
-void Primitive::draw(GraphicsContext& context, Matrix4 viewMat)
+void Primitive::Render(GraphicsContext& context, Matrix4 viewMat)
 {
     context.SetPipelineState(graphicsPSO);
     context.SetRootSignature(Renderer::m_RootSig);
@@ -279,4 +294,196 @@ void Primitive::draw(GraphicsContext& context, Matrix4 viewMat)
     context.DrawIndexedInstanced(36, 1, 0, 0, 0);
 
     context.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT);
+}
+
+void Primitive::Render(Renderer::MeshSorter& sorter, const GpuBuffer& Constants,
+	const AffineTransform sphereTransforms[]) const
+{
+    // Pointer to current mesh
+    const uint8_t* pMesh = m_MeshData.get();
+
+    const Frustum& frustum = sorter.GetViewFrustum();
+    const AffineTransform& viewMat = (const AffineTransform&)sorter.GetViewMatrix();
+
+    for (uint32_t i = 0; i < m_NumMeshes; ++i)
+    {
+        const Mesh& mesh = *(const Mesh*)pMesh;
+
+        const AffineTransform& sphereXform = sphereTransforms[mesh.meshCBV];
+        Scalar scaleXSqr = LengthSquare(sphereXform.GetX());
+        Scalar scaleYSqr = LengthSquare(sphereXform.GetY());
+        Scalar scaleZSqr = LengthSquare(sphereXform.GetZ());
+        Scalar sphereScale = Sqrt(Max(Max(scaleXSqr, scaleYSqr), scaleZSqr));
+
+        BoundingSphere sphereLS((const XMFLOAT4*)mesh.bounds);
+        BoundingSphere sphereWS = BoundingSphere(sphereXform * sphereLS.GetCenter(), sphereScale * sphereLS.GetRadius());
+        BoundingSphere sphereVS = BoundingSphere(viewMat * sphereWS.GetCenter(), sphereWS.GetRadius());
+
+        if (frustum.IntersectSphere(sphereVS))
+        {
+            float distance = -sphereVS.GetCenter().GetZ() - sphereVS.GetRadius();
+            sorter.AddMesh(mesh, distance,
+                Constants.GetGpuVirtualAddress() + sizeof(MeshConstants) * mesh.meshCBV,
+                m_DataBuffer.GetGpuVirtualAddress());
+        }
+
+        pMesh += sizeof(Mesh) + (mesh.numDraws - 1) * sizeof(Mesh::Draw);
+    }
+}
+
+PrimitiveInstance::PrimitiveInstance(std::shared_ptr<const Primitive> sourcePrimitive)
+    : m_Primitive(sourcePrimitive), m_Locator(kIdentity)
+{
+    static_assert((_alignof(Constants) & 255) == 0, "CBVs need 256 byte alignment");
+    if (sourcePrimitive == nullptr)
+    {
+        m_ConstantsCPU.Destroy();
+        m_ConstantsGPU.Destroy();
+        m_BoundingSphereTransforms = nullptr;
+    }
+    else
+    {
+        m_ConstantsCPU.Create(L"Mesh Constant Upload Buffer", sourcePrimitive->m_NumNodes * sizeof(Constants));
+        m_ConstantsGPU.Create(L"Mesh Constant GPU Buffer", sourcePrimitive->m_NumNodes, sizeof(Constants));
+
+        m_BoundingSphereTransforms.reset(new AffineTransform[sourcePrimitive->m_NumNodes]);
+    }
+}
+
+PrimitiveInstance::PrimitiveInstance(const PrimitiveInstance& primInstance)
+	: PrimitiveInstance(primInstance.m_Primitive) {}
+
+PrimitiveInstance& PrimitiveInstance::operator=(std::shared_ptr<const Primitive> sourcePrimitive)
+{
+    m_Primitive = sourcePrimitive;
+    m_Locator = UniformTransform(kIdentity);
+    if (sourcePrimitive == nullptr)
+    {
+        m_ConstantsCPU.Destroy();
+        m_ConstantsGPU.Destroy();
+        m_BoundingSphereTransforms = nullptr;
+    }
+    else
+    {
+        m_ConstantsCPU.Create(L"Mesh Constant Upload Buffer", sourcePrimitive->m_NumNodes * sizeof(Constants));
+        m_ConstantsGPU.Create(L"Mesh Constant GPU Buffer", sourcePrimitive->m_NumNodes, sizeof(Constants));
+
+        m_BoundingSphereTransforms.reset(new AffineTransform[sourcePrimitive->m_NumNodes]);
+    }
+    return *this;
+}
+
+void PrimitiveInstance::Update(GraphicsContext& gfxContext, float deltaTime)
+{
+    if (m_Primitive == nullptr)
+        return;
+
+    static const size_t kMaxStackDepth = 32;
+    size_t stackIdx = 0;
+    Matrix4 matrixStack[kMaxStackDepth];
+    Matrix4 ParentMatrix = Matrix4((AffineTransform)m_Locator);
+
+    Constants* cb = (Constants*)m_ConstantsCPU.Map();
+
+    const GraphNode* sceneGraph = m_Primitive->m_SceneGraph.get();
+
+    // Traverse the scene graph in depth first order.  This is the same as linear order
+    // for how the nodes are stored in memory.  Uses a matrix stack instead of recursion.
+    for (const GraphNode* Node = sceneGraph; ; ++Node)
+    {
+        Matrix4 xform = Node->xform;
+        if (!Node->skeletonRoot)
+            xform = ParentMatrix * xform;
+
+        // Concatenate the transform with the parent's matrix and update the matrix list
+        {
+            // Scoped so that I don't forget that I'm pointing to write-combined memory and
+            // should not read from it.
+            Constants& cbv = cb[0];
+            cbv.World = xform;
+            cbv.WorldIT = InverseTranspose(xform.Get3x3());
+
+            m_BoundingSphereTransforms[0] = AffineTransform(
+                (Vector3)xform.GetX(),
+                (Vector3)xform.GetY(),
+                (Vector3)xform.GetZ(),
+                (Vector3)xform.GetW());
+        }
+
+        // If the next node will be a descendent, replace the parent matrix with our new matrix
+        if (Node->hasChildren)
+        {
+            // ...but if we have siblings, make sure to backup our current parent matrix on the stack
+            if (Node->hasSibling)
+            {
+                ASSERT(stackIdx < kMaxStackDepth, "Overflowed the matrix stack");
+                matrixStack[stackIdx++] = ParentMatrix;
+            }
+            ParentMatrix = xform;
+        }
+        else if (!Node->hasSibling)
+        {
+            // There are no more siblings.  If the stack is empty, we are done.  Otherwise, pop
+            // a matrix off the stack and continue.
+            if (stackIdx == 0)
+                break;
+
+            ParentMatrix = matrixStack[--stackIdx];
+        }
+    }
+
+    m_ConstantsCPU.Unmap();
+
+    gfxContext.TransitionResource(m_ConstantsGPU, D3D12_RESOURCE_STATE_COPY_DEST, true);
+    gfxContext.GetCommandList()->CopyBufferRegion(m_ConstantsGPU.GetResource(), 0, m_ConstantsCPU.GetResource(), 0, m_ConstantsCPU.GetBufferSize());
+    gfxContext.TransitionResource(m_ConstantsGPU, D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+void PrimitiveInstance::Render(Renderer::MeshSorter& sorter) const
+{
+    if (m_Primitive == nullptr)
+        return;
+
+    const Frustum& frustum = sorter.GetWorldFrustum();
+    m_Primitive->Render(sorter, m_ConstantsGPU, m_BoundingSphereTransforms.get());
+}
+
+void PrimitiveInstance::Resize(float newRadius)
+{
+    if (m_Primitive == nullptr)
+        return;
+
+    m_Locator.SetScale(newRadius / m_Primitive->m_BoundingSphere.GetRadius());
+}
+
+Vector3 PrimitiveInstance::GetCenter() const
+{
+    if (m_Primitive == nullptr)
+        return Vector3(kOrigin);
+
+    return m_Locator * m_Primitive->m_BoundingSphere.GetCenter();
+}
+
+Scalar PrimitiveInstance::GetRadius() const
+{
+    if (m_Primitive == nullptr)
+        return Scalar(kZero);
+
+    return m_Locator.GetScale() * m_Primitive->m_BoundingSphere.GetRadius();
+}
+
+BoundingSphere PrimitiveInstance::GetBoundingSphere() const
+{
+    if (m_Primitive == nullptr)
+        return BoundingSphere(kZero);
+
+    return m_Locator * m_Primitive->m_BoundingSphere;
+}
+
+OrientedBox PrimitiveInstance::GetBoundingBox() const
+{
+    if (m_Primitive == nullptr)
+        return AxisAlignedBox(Vector3(kZero), Vector3(kZero));
+
+    return m_Locator * m_Primitive->m_BoundingBox;
 }

@@ -65,10 +65,11 @@ private:
     D3D12_VIEWPORT m_MainViewport;
     D3D12_RECT m_MainScissor;
 
-    ModelInstance m_ModelInst;
+    //ModelInstance m_ModelInst;
     ShadowCamera m_SunShadowCamera;
 
     Primitive* prim;
+	PrimitiveInstance primInst;
 };
 
 CREATE_APPLICATION( ModelViewer )
@@ -183,9 +184,9 @@ void ModelViewer::Startup( void )
     }
     else
     {
-        m_ModelInst = Renderer::LoadModel(gltfFileName, forceRebuild);
+        /*m_ModelInst = Renderer::LoadModel(gltfFileName, forceRebuild);
         m_ModelInst.LoopAllAnimations();
-        m_ModelInst.Resize(10.0f);
+        m_ModelInst.Resize(10.0f);*/
 
         MotionBlur::Enable = false;
     }
@@ -193,15 +194,18 @@ void ModelViewer::Startup( void )
     m_Camera.SetZRange(1.0f, 10000.0f);
     if (gltfFileName.size() == 0)
         m_CameraController.reset(new FlyingFPSCamera(m_Camera, Vector3(kYUnitVector)));
-    else
-        m_CameraController.reset(new OrbitCamera(m_Camera, m_ModelInst.GetBoundingSphere(), Vector3(kYUnitVector)));
+    //else
+        //m_CameraController.reset(new OrbitCamera(m_Camera, m_ModelInst.GetBoundingSphere(), Vector3(kYUnitVector)));
 
     prim = new Primitive("primitive cube", Primitive::CUBE);
+	std::shared_ptr<Primitive> prim_shared(prim);
+	primInst = prim_shared;
 }
 
 void ModelViewer::Cleanup( void )
 {
-    m_ModelInst = nullptr;
+    //m_ModelInst = nullptr;
+    primInst = nullptr;
 
     g_IBLTextures.clear();
 
@@ -232,7 +236,8 @@ void ModelViewer::Update( float deltaT )
 
     GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Update");
 
-    m_ModelInst.Update(gfxContext, deltaT);
+    //m_ModelInst.Update(gfxContext, deltaT);
+    primInst.Update(gfxContext, deltaT);
 
     gfxContext.Finish();
 
@@ -267,14 +272,14 @@ void ModelViewer::RenderScene( void )
 
     ParticleEffectManager::Update(gfxContext.GetComputeContext(), Graphics::GetFrameTime());
 
-    if (m_ModelInst.IsNull())
+    /*if (m_ModelInst.IsNull())
     {
 #ifdef LEGACY_RENDERER
         Sponza::RenderScene(gfxContext, m_Camera, viewport, scissor);
 #endif
     }
     else
-    {
+    {*/
         // Update global constants
         float costheta = cosf(g_SunOrientation);
         float sintheta = sinf(g_SunOrientation);
@@ -282,7 +287,8 @@ void ModelViewer::RenderScene( void )
         float sinphi = sinf(g_SunInclination * 3.14159f * 0.5f);
 
         Vector3 SunDirection = Normalize(Vector3( costheta * cosphi, sinphi, sintheta * cosphi ));
-        Vector3 ShadowBounds = Vector3(m_ModelInst.GetRadius());
+        //Vector3 ShadowBounds = Vector3(m_ModelInst.GetRadius());
+        Vector3 ShadowBounds = Vector3(primInst.GetRadius());
         //m_SunShadowCamera.UpdateMatrix(-SunDirection, m_ModelInst.GetCenter(), ShadowBounds,
         m_SunShadowCamera.UpdateMatrix(-SunDirection, Vector3(0, -500.0f, 0), Vector3(5000, 3000, 3000),
             (uint32_t)g_ShadowBuffer.GetWidth(), (uint32_t)g_ShadowBuffer.GetHeight(), 16);
@@ -305,7 +311,8 @@ void ModelViewer::RenderScene( void )
 		sorter.SetDepthStencilTarget(g_SceneDepthBuffer);
 		sorter.AddRenderTarget(g_SceneColorBuffer);
 
-        m_ModelInst.Render(sorter);
+        //m_ModelInst.Render(sorter);
+        primInst.Render(sorter);
 
         sorter.Sort();
 
@@ -327,10 +334,11 @@ void ModelViewer::RenderScene( void )
 				shadowSorter.SetCamera(m_SunShadowCamera);
 				shadowSorter.SetDepthStencilTarget(g_ShadowBuffer);
 
-                m_ModelInst.Render(shadowSorter);
+                //m_ModelInst.Render(shadowSorter);
+                primInst.Render(shadowSorter);
 
                 shadowSorter.Sort();
-                shadowSorter.RenderMeshes(MeshSorter::kZPass, gfxContext, globals);
+                //shadowSorter.RenderMeshes(MeshSorter::kZPass, gfxContext, globals);
             }
 
             gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
@@ -351,7 +359,7 @@ void ModelViewer::RenderScene( void )
 
             sorter.RenderMeshes(MeshSorter::kTransparent, gfxContext, globals);
         }
-    }
+    //}
 
     // Some systems generate a per-pixel velocity buffer to better track dynamic and skinned meshes.  Everything
     // is static in our scene, so we generate velocity from camera motion and the depth buffer.  A velocity buffer
@@ -368,7 +376,7 @@ void ModelViewer::RenderScene( void )
     else
         MotionBlur::RenderObjectBlur(gfxContext, g_VelocityBuffer);
 
-    prim->draw(gfxContext, m_Camera.GetViewProjMatrix());
+    //prim->Render(gfxContext, m_Camera.GetViewProjMatrix());
 
     gfxContext.Finish();
 }
