@@ -70,7 +70,7 @@ DirectXUtil::AccelerationStructures::ShapeResources* DirectXUtil::AccelerationSt
 	switch (type)
 	{
 	case SPHERE:
-		shape = DirectXUtil::Primitives::createSphere(2.0f, 32);
+		shape = DirectXUtil::Primitives::createSphere(2.0f, 32, false, false, glm::vec3(0,1,0));
 		break;
 	case CUBE:
 		shape = DirectXUtil::Primitives::createCube(1.5f);
@@ -202,8 +202,9 @@ DirectXUtil::Structs::AccelerationStructureBuffers DirectXUtil::AccelerationStru
 	{
 		delete createdPrimitive;
 	}
+
 	//Create the primitive
-	createdPrimitive = createPrimitive(pDevice, PrimitiveType::CUBE);
+	createdPrimitive = createPrimitive(pDevice, PrimitiveType::SPHERE);
 
 	if (!createdPrimitive)
 	{

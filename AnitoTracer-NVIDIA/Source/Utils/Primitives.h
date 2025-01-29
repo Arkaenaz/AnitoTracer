@@ -22,7 +22,7 @@ namespace DirectXUtil
 		 * Sphere Primitive Generation
 		 */
 		static Shape createSphere(float diameter, int tessellation, bool uvHorizontalFlip = false,
-		                          bool uvVerticalFlip = false);
+		                          bool uvVerticalFlip = false, const glm::vec3& positionOffset = glm::vec3(0,0,0));
 
 		/**
 		 * Cube Primitive Generation
