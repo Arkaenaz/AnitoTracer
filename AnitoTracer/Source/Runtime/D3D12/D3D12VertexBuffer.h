@@ -14,8 +14,11 @@ namespace Anito
 
 		void load(const D3D12Device& device, void* listVertices, UINT sizeVertex, UINT sizeList);
 		D3D12_VERTEX_BUFFER_VIEW getVertexBufferView();
+		UINT getSizeVertex();
+		D3D12Buffer* get();
 
 	private:
+		UINT sizeVertex;
 		UINT vertexBufferSize;
 
 		D3D12Buffer* vertexBuffer;

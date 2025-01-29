@@ -126,23 +126,34 @@ namespace Anito
 		/*m_deviceContext->ClearDepthStencilView(renderTexture->m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);*/
 	}
 
-	void D3D12CommandContext::setViewportSize(FLOAT width, FLOAT height)
+	
+
+	void D3D12CommandContext::setViewportandScissor(UINT x, UINT y, UINT width, UINT height)
 	{
-		//TODO : Move this into a Graphics Pipeline Class
+		this->setViewport(static_cast<FLOAT>(x), static_cast<FLOAT>(y), static_cast<FLOAT>(width), static_cast<FLOAT>(height));
+		this->setScissor(x, y, width, height);
+	}
+
+	void D3D12CommandContext::setViewport(FLOAT x, FLOAT y, FLOAT width, FLOAT height)
+	{
 		D3D12_VIEWPORT vp = {};
-		vp.TopLeftX = 0.0f;
-		vp.TopLeftY = 0.0f;
+		vp.TopLeftX = x;
+		vp.TopLeftY = y;
 		vp.Width = width;
 		vp.Height = height;
 		vp.MinDepth = D3D12_MIN_DEPTH;
 		vp.MaxDepth = D3D12_MAX_DEPTH;
 		this->commandList->RSSetViewports(1, &vp);
+	}
 
-		RECT scRect;
-		scRect.left = scRect.top = 0l;
-		scRect.right = static_cast<LONG>(width);
-		scRect.bottom = static_cast<LONG>(height);
-		this->commandList->RSSetScissorRects(1, &scRect);
+	void D3D12CommandContext::setScissor(LONG x, LONG y, LONG width, LONG height)
+	{
+		RECT rect;
+		rect.left = x;
+		rect.top = y;
+		rect.right = width;
+		rect.bottom = height;
+		this->commandList->RSSetScissorRects(1, &rect);
 	}
 
 	void D3D12CommandContext::copyBufferRegion(ID3D12Resource* destination, UINT64 destinationOffset,

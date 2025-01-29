@@ -120,6 +120,9 @@ namespace Anito {
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
+				if (msg.message == WM_QUIT)
+					this->isRunning = false;
 			}
 
 			Sleep(1);
@@ -135,28 +138,6 @@ namespace Anito {
 		::ClientToScreen(this->windowHandle, (POINT*)&rect);
 
 		return rect;
-	}
-
-	void Window::onCreate()
-	{
-	}
-
-	void Window::onUpdate()
-	{
-
-	}
-
-	void Window::onRender()
-	{
-	}
-
-	void Window::onDestroy()
-	{
-		this->isRunning = false;
-	}
-
-	void Window::onResize(UINT width, UINT height)
-	{
 	}
 
 	void Window::onFocus()

@@ -86,7 +86,7 @@
     <ClCompile Include="Source\Runtime\D3D12\D3D12VertexBuffer.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\VertexBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\D3D12\D3D12PipelineState.cpp">
+    <ClCompile Include="Source\Runtime\D3D12\D3D12PipelineStateObject.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12Device.cpp">
@@ -101,7 +101,7 @@
     <ClCompile Include="Source\Runtime\D3D12\D3D12Resource.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.cpp">
+    <ClCompile Include="Source\Runtime\D3D12\D3D12GraphicsPipelineObject.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState\GraphicsPipeline</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12CommandQueue.cpp">
@@ -109,6 +109,15 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\D3D12\D3D12IndexBuffer.cpp">
       <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\D3D12\Raytracing\AccelerationStructures.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12RootSignature.cpp">
+      <Filter>Source\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12RaytracingPipeline.cpp">
+      <Filter>Source\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +184,7 @@
     <ClInclude Include="Source\Runtime\D3D12\D3D12VertexBuffer.h">
       <Filter>Source\Engine\D3D12\RenderSystem\VertexBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\D3D12\D3D12PipelineState.h">
+    <ClInclude Include="Source\Runtime\D3D12\D3D12PipelineStateObject.h">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12Device.h">
@@ -190,7 +199,7 @@
     <ClInclude Include="Source\Runtime\D3D12\D3D12Resource.h">
       <Filter>Source\Engine\D3D12\RenderSystem\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Runtime\D3D12\D3D12GraphicsPipeline.h">
+    <ClInclude Include="Source\Runtime\D3D12\D3D12GraphicsPipelineObject.h">
       <Filter>Source\Engine\D3D12\RenderSystem\PipelineState\GraphicsPipeline</Filter>
     </ClInclude>
     <ClInclude Include="Source\Runtime\D3D12\D3D12CommandQueue.h">
@@ -199,6 +208,10 @@
     <ClInclude Include="Source\Runtime\D3D12\D3D12IndexBuffer.h">
       <Filter>Source\Engine\D3D12\RenderSystem\IndexBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Runtime\D3D12\Raytracing\AccelerationStructureBuffers.h" />
+    <ClInclude Include="Source\Runtime\D3D12\Raytracing\AccelerationStructures.h" />
+    <ClInclude Include="D3D12RootSignature.h" />
+    <ClInclude Include="D3D12RaytracingPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources\AnitoTracer.rc">

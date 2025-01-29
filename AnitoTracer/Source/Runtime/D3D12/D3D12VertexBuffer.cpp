@@ -16,7 +16,8 @@ namespace Anito
 
 	void D3D12VertexBuffer::load(const D3D12Device& device, void* listVertices, UINT sizeVertex, UINT sizeList)
 	{
-        this->vertexBufferSize = sizeVertex * sizeList;
+		this->sizeVertex = sizeVertex;
+        this->vertexBufferSize = this->sizeVertex * sizeList;
 
 		this->vertexBuffer = D3D12Buffer::createVertexBuffer(device, this->vertexBufferSize);
 		this->vertexBuffer->get()->SetName(L"Vertex Buffer");
@@ -34,6 +35,16 @@ namespace Anito
 	D3D12_VERTEX_BUFFER_VIEW D3D12VertexBuffer::getVertexBufferView()
 	{
         return this->vertexBufferView;
+	}
+
+	UINT D3D12VertexBuffer::getSizeVertex()
+	{
+		return this->sizeVertex;
+	}
+
+	D3D12Buffer* D3D12VertexBuffer::get()
+	{
+		return this->vertexBuffer;
 	}
 }
 

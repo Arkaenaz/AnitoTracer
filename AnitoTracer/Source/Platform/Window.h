@@ -8,11 +8,11 @@ namespace Anito
 		Window();
 		virtual ~Window();
 
-		virtual void onCreate();
-		virtual void onUpdate();
-		virtual void onRender();
-		virtual void onDestroy();
-		virtual void onResize(UINT width, UINT height);
+		virtual void onCreate() = 0;
+		virtual void onUpdate() = 0;
+		virtual void onRender() = 0;
+		virtual void onDestroy() = 0;
+		virtual void onResize(UINT width, UINT height) = 0;
 		virtual void onFocus();
 		virtual void onKillFocus();
 

@@ -18,6 +18,7 @@ namespace Anito
 //#endif
 
 	private:
+		bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter);
 /*#if defined(NTDDI_WIN11_ZN)
 		ID3D12Device10* device;
 #else*/

@@ -2,14 +2,12 @@
 
 #include "D3D12Device.h"
 #include "D3D12CommandContext.h"
-#include "D3D12GraphicsPipeline.h"
+#include "D3D12GraphicsPipelineObject.h"
 #include "D3D12SwapChain.h"
 #include "D3D12VertexBuffer.h"
-#include "D3D12PipelineState.h"
 
 namespace Anito
 {
-	class D3D12PipelineState;
 	class D3D12CommandContext;
 	class D3D12SwapChain;
 	class D3D12VertexBuffer;
@@ -17,7 +15,6 @@ namespace Anito
 	{
 	public:
 		D3D12SwapChain* createSwapChain(HWND hwnd, UINT width, UINT height);
-		D3D12PipelineState* createPipelineState(const D3D12GraphicsPipeline& graphicsPipeline);
 		D3D12VertexBuffer* createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList);
 		D3D12Device* getDevice();
 		D3D12CommandContext* getDXContext();

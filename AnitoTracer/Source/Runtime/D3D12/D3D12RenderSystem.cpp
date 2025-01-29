@@ -10,12 +10,6 @@ namespace Anito
 		return new D3D12SwapChain(*this->device, this, width, height, hwnd);
 	}
 
-	// TODO : Create Custom Rasterizer States and Blend States
-	D3D12PipelineState* D3D12RenderSystem::createPipelineState(const D3D12GraphicsPipeline& graphicsPipeline)
-	{
-		return new D3D12PipelineState(*this->device, graphicsPipeline);
-	}
-
 	D3D12VertexBuffer* D3D12RenderSystem::createVertexBuffer(void* listVertices, UINT sizeVertex, UINT sizeList)
 	{
 		D3D12VertexBuffer* vertexBuffer = nullptr;
