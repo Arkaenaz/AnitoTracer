@@ -203,7 +203,7 @@ DirectXUtil::Structs::AccelerationStructureBuffers DirectXUtil::AccelerationStru
 		delete createdPrimitive;
 	}
 	//Create the primitive
-	createdPrimitive = createPrimitive(pDevice, PrimitiveType::SPHERE);
+	createdPrimitive = createPrimitive(pDevice, PrimitiveType::CUBE);
 
 	if (!createdPrimitive)
 	{

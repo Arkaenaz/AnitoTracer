@@ -248,6 +248,10 @@ void AppWindow::createAccelerationStructures()
 		mpDevice,
 		mpCmdList));
 
+	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPrimitiveBottomLevelAS(
+		mpDevice,
+		mpCmdList));
+
 	// Create the TLAS
 	DirectXUtil::AccelerationStructures::buildTopLevelAS(
 		mpDevice,
