@@ -34,6 +34,8 @@
 #include "ShadowCamera.h"
 #include "Display.h"
 
+#include "Primitive.h"
+
 #define LEGACY_RENDERER
 
 using namespace GameCore;
@@ -65,6 +67,8 @@ private:
 
     ModelInstance m_ModelInst;
     ShadowCamera m_SunShadowCamera;
+
+    Primitive* prim;
 };
 
 CREATE_APPLICATION( ModelViewer )
@@ -191,6 +195,8 @@ void ModelViewer::Startup( void )
         m_CameraController.reset(new FlyingFPSCamera(m_Camera, Vector3(kYUnitVector)));
     else
         m_CameraController.reset(new OrbitCamera(m_Camera, m_ModelInst.GetBoundingSphere(), Vector3(kYUnitVector)));
+
+    prim = new Primitive("primitive cube", Primitive::CUBE);
 }
 
 void ModelViewer::Cleanup( void )
@@ -204,6 +210,8 @@ void ModelViewer::Cleanup( void )
 #endif
 
     Renderer::Shutdown();
+
+    delete prim;
 }
 
 namespace Graphics
@@ -359,6 +367,8 @@ void ModelViewer::RenderScene( void )
         DepthOfField::Render(gfxContext, m_Camera.GetNearClip(), m_Camera.GetFarClip());
     else
         MotionBlur::RenderObjectBlur(gfxContext, g_VelocityBuffer);
+
+    prim->draw(gfxContext, m_Camera.GetViewProjMatrix());
 
     gfxContext.Finish();
 }

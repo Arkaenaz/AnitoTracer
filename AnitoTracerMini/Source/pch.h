@@ -58,4 +58,5 @@
 #include "EngineTuning.h"
 #include "EngineProfiling.h"
 
+#include "../Libraries/DirectXTK/GeometricPrimitive.h"
 #include "../Libraries/DirectXTK/SimpleMath.h"

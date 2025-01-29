@@ -14,7 +14,7 @@ public:
 		XMFLOAT4 Color;
 	};
 
-	enum ObjectType { CUBE };
+	enum ObjectType { CUBE, SPHERE, PLANE, CYLINDER, CAPSULE };
 
 protected:
 	GraphicsPSO graphicsPSO;
@@ -29,12 +29,18 @@ protected:
 	ObjectType type;
 	std::string name;
 
+	bool rendered = false;
+
 public:
 	Primitive(std::string name, ObjectType type, RootSignature* rs);
 	~Primitive();
 
 	virtual void init(ObjectType type);
 	void createCube();
+	void createSphere();
+	void createPlane();
+	void createCylinder();
+	void createCapsule();
 
 	virtual void update(float deltaTime, RECT viewport);
 	virtual void draw(GraphicsContext& context, Matrix4 viewMat);

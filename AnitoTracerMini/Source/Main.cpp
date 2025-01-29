@@ -5,6 +5,7 @@
 #include "CommandContext.h"
 #include "RootSignature.h"
 #include "Camera.h"
+#include "VectorMath.h"
 
 #include "Primitive.h"
 
@@ -36,12 +37,14 @@ private:
     RootSignature rootSignature;
 
     Camera camera;
-    FlyingFPSCamera* cameraController;
+    std::unique_ptr<CameraController> cameraController;
     Matrix4 viewProjMatrix;
+
     D3D12_VIEWPORT mainViewport;
     D3D12_RECT mainScissor;
 
     Primitive* cube;
+    Primitive* plane;
 
     float radius = 5.0f;
 
@@ -64,14 +67,16 @@ void AnitoTracer::Startup(void)
     rootSignature.Finalize(L"box signature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     cube = new Primitive("primitive cube", Primitive::CUBE, &rootSignature);
+    plane = new Primitive("primitive cube", Primitive::PLANE, &rootSignature);
 
     camera.SetZRange(1.0f, 10000.0f);
-    cameraController = new FlyingFPSCamera(camera, Math::Vector3(kYUnitVector));
+    cameraController.reset(new FlyingFPSCamera(camera, Math::Vector3(kYUnitVector)));
 }
 
 void AnitoTracer::Cleanup(void)
 {
     delete cube;
+    delete plane;
 }
 
 void AnitoTracer::Update(float deltaT)
@@ -83,7 +88,7 @@ void AnitoTracer::Update(float deltaT)
         // Make each pixel correspond to a quarter of a degree.
         float dx = GameInput::GetAnalogInput(GameInput::kAnalogMouseX) - xLast;
         float dy = GameInput::GetAnalogInput(GameInput::kAnalogMouseY) - yLast;
-
+        
         if (GameInput::IsPressed(GameInput::kMouse0))
         {
             // Update angles based on input to orbit camera around box.
@@ -118,8 +123,8 @@ void AnitoTracer::Update(float deltaT)
 
     cameraController->Update(deltaT);
 
-    camera.SetEyeAtUp({ x, y, z }, Math::Vector3(kZero), Math::Vector3(kYUnitVector));
-    camera.Update();
+    /*camera.SetEyeAtUp({ x, y, z }, Math::Vector3(kZero), Math::Vector3(kYUnitVector));
+    camera.Update();*/
 
     viewProjMatrix = camera.GetViewProjMatrix();
 
@@ -151,6 +156,7 @@ void AnitoTracer::RenderScene(void)
     gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV()/*, g_SceneDepthBuffer.GetDSV_DepthReadOnly()*/);
 
     cube->draw(gfxContext, viewProjMatrix);
+    plane->draw(gfxContext, viewProjMatrix);
 
     gfxContext.Finish();
 }

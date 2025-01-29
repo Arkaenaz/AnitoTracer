@@ -23,7 +23,12 @@
 #include <sdkddkver.h>
 
 // Use the C++ standard templated min/max
-#define NOMINMAX
+#ifndef WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+	#define NOMINMAX
+#endif
 
 // DirectX apps don't need GDI
 #define NODRAWTEXT
@@ -39,8 +44,6 @@
 // WinHelp is deprecated
 #define NOHELP
 
-#define WIN32_LEAN_AND_MEAN
-
 #include <Windows.h>
 #include <wrl/client.h>
 #include <wrl/event.h>
@@ -48,6 +51,10 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include "d3dx12.h"
+
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
+
 #ifdef _DEBUG
     #include <dxgidebug.h>
 #endif
@@ -56,6 +63,9 @@
 #define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
 #define MY_IID_PPV_ARGS                     IID_PPV_ARGS
 
+#if _MSC_VER >= 1800
+	#include <d3d11_2.h>
+#endif
 
 #include <cstdint>
 #include <cstdio>
