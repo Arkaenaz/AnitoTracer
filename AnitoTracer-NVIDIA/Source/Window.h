@@ -3,6 +3,8 @@
 #include <dxgi1_6.h>
 #include <string>
 
+#include <vector>
+
 class Window
 {
 public:

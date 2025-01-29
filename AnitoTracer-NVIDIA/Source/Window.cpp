@@ -35,7 +35,7 @@ void Window::d3dTraceHR(const std::string& msg, const HRESULT hr)
 	msgBox(error_msg);
 }
 
-std::wstring string_to_wstring(const std::string& str)
+std::wstring Window::string_2_wstring(const std::string& str)
 {
 	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.length(), NULL, 0);
 	std::wstring wstr(size_needed, 0);
@@ -43,7 +43,7 @@ std::wstring string_to_wstring(const std::string& str)
 	return wstr;
 }
 
-std::string wstring_to_string(const std::wstring& wstr)
+std::string Window::wstring_2_string(const std::wstring& wstr)
 {
 	int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), NULL, 0, NULL, NULL);
 	std::string str(size_needed, 0);
