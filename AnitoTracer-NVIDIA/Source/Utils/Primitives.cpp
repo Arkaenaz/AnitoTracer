@@ -157,7 +157,7 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createCube(const float s
                                                                    const float uTileFactor,
                                                                    const float vTileFactor)
 {
-	Shape returnSphereInfo;
+	Shape returnCubeInfo;
 
 	const float uCoordMin = uvHorizontalFlip ? uTileFactor : 0;
 	const float uCoordMax = uvHorizontalFlip ? 0 : uTileFactor;
@@ -207,48 +207,48 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createCube(const float s
 		glm::vec3 side1 = glm::vec3(normal.y, normal.z, normal.x);
 		glm::vec3 side2 = glm::cross(normal, side1);
 
-		const int vertexCount = returnSphereInfo.vertexData.size();
+		const int vertexCount = returnCubeInfo.vertexData.size();
 
 		// Six indices (two triangles) per face.
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 0));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 0));
 
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 1));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 1));
 
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 3));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 3));
 
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 1));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 1));
 
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 2));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 2));
 
-		returnSphereInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 3));
+		returnCubeInfo.indexData.push_back(static_cast<unsigned short>(vertexCount + 3));
 
 		// 0   3
 		// 1   2
 		const float sideOverTwo = size * 0.5f;
 
 		// Four vertices per face.
-		returnSphereInfo.vertexData.emplace_back(
+		returnCubeInfo.vertexData.emplace_back(
 			(normal - side1 - side2) * sideOverTwo,
 			normal,
 			tangent,
 			texCoord[j]
 		);
 
-		returnSphereInfo.vertexData.emplace_back(
+		returnCubeInfo.vertexData.emplace_back(
 			(normal - side1 + side2) * sideOverTwo,
 			normal,
 			tangent,
 			texCoord[j + 1]
 		);
 
-		returnSphereInfo.vertexData.emplace_back(
+		returnCubeInfo.vertexData.emplace_back(
 			(normal + side1 + side2) * sideOverTwo,
 			normal,
 			tangent,
 			texCoord[j + 2]
 		);
 
-		returnSphereInfo.vertexData.emplace_back(
+		returnCubeInfo.vertexData.emplace_back(
 			(normal + side1 - side2) * sideOverTwo,
 			normal,
 			tangent,
@@ -256,9 +256,9 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createCube(const float s
 		);
 	}
 
-	calculateTangentSpace(returnSphereInfo);
+	calculateTangentSpace(returnCubeInfo);
 
-	return returnSphereInfo;
+	return returnCubeInfo;
 }
 
 DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createQuad(const int size,
@@ -267,9 +267,9 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createQuad(const int siz
                                                                    const float uTileFactor,
                                                                    const float vTileFactor)
 {
-	Shape returnSphereInfo;
+	Shape returnQuadInfo;
 
-	returnSphereInfo.vertexData =
+	returnQuadInfo.vertexData =
 	{
 		// Indexed Quad
 		Structs::VertexPositionNormalTangentTexture(glm::vec3(-size, 0, -size),
@@ -290,9 +290,9 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createQuad(const int siz
 		                                            glm::vec2(0)),
 	};
 
-	returnSphereInfo.indexData = {0, 1, 2, 0, 2, 3};
+	returnQuadInfo.indexData = {0, 1, 2, 0, 2, 3};
 
-	return returnSphereInfo;
+	return returnQuadInfo;
 }
 
 void DirectXUtil::Primitives::calculateTangentSpace(Shape& shape)
