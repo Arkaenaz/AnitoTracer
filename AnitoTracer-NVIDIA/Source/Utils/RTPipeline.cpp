@@ -2,8 +2,8 @@
 
 #include <fstream>
 #include <sstream>
-#include "Source/DXSample.h"
-#include "Source/DXSampleHelper.h"
+#include "Source/Window.h"
+#include "Source/Helper.h"
 #include "Source/DXCAPI/dxcapi.use.h"
 
 const WCHAR* DirectXUtil::RTPipeline::kRayGenShader = L"rayGen";
@@ -35,7 +35,7 @@ SampleFramework::IDxcBlobPtr DirectXUtil::RTPipeline::compileLibrary(const WCHAR
 	const std::ifstream shaderFile(filename);
 	if (shaderFile.good() == false)
 	{
-		ThrowError("Can't open file " + DXSample::wstring_2_string(std::wstring(filename)));
+		ThrowError("Can't open file " + Window::wstring_2_string(std::wstring(filename)));
 	}
 	std::stringstream strStream;
 	strStream << shaderFile.rdbuf();

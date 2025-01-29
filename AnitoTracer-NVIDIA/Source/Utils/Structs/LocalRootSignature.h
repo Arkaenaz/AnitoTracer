@@ -11,7 +11,7 @@ namespace DirectXUtil
 		{
 			LocalRootSignature(const SampleFramework::ID3D12Device5Ptr pDevice, const D3D12_ROOT_SIGNATURE_DESC& desc)
 			{
-				pRootSig = D3D12Reflection::createRootSignature(pDevice, desc);
+				pRootSig = AppWindow::createRootSignature(pDevice, desc);
 				pInterface = pRootSig.Get();
 				subobject.pDesc = &pInterface;
 				subobject.Type = D3D12_STATE_SUBOBJECT_TYPE_LOCAL_ROOT_SIGNATURE;

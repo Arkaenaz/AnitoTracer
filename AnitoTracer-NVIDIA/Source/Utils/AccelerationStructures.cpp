@@ -4,7 +4,7 @@
 
 #include "Primitives.h"
 #include "../../_externals/glm/glm/gtx/euler_angles.hpp"
-#include "Source/DXSampleHelper.h"
+#include "Source/Helper.h"
 
 //Init static instance reference
 

@@ -2,7 +2,7 @@
 
 #include <d3d12.h>
 #include "Source/Dx12/InterfacePointers.h"
-#include "Source/D3D12Reflection.h"
+#include "Source/AppWindow.h"
 
 namespace DirectXUtil
 {
@@ -12,7 +12,7 @@ namespace DirectXUtil
 		{
 			GlobalRootSignature(const SampleFramework::ID3D12Device5Ptr pDevice, const D3D12_ROOT_SIGNATURE_DESC& desc)
 			{
-				pRootSig = D3D12Reflection::createRootSignature(pDevice, desc);
+				pRootSig = AppWindow::createRootSignature(pDevice, desc);
 				pInterface = pRootSig.Get();
 				subobject.pDesc = &pInterface;
 				subobject.Type = D3D12_STATE_SUBOBJECT_TYPE_GLOBAL_ROOT_SIGNATURE;

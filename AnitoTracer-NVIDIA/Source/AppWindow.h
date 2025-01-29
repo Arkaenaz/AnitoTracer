@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DXSample.h"
+#include "Window.h"
 #include "Dx12/InterfacePointers.h"
 #include "_externals/glm/glm/glm.hpp"
 #include <vector>
@@ -11,10 +11,10 @@
 
 using Microsoft::WRL::ComPtr;
 
-class D3D12Reflection final : public DXSample
+class AppWindow final : public Window
 {
 public:
-	D3D12Reflection(UINT width, UINT height, std::wstring name);
+	AppWindow(UINT width, UINT height, std::wstring name);
 
 	void OnInit() override;
 	void OnUpdate() override;

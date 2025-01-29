@@ -1,6 +1,6 @@
 #include "D3D12GraphicsContext.h"
 
-#include "Source/DXSampleHelper.h"
+#include "Source/Helper.h"
 
 uint32_t DirectXUtil::D3D12GraphicsContext::getDefaultSwapChainBuffers()
 {

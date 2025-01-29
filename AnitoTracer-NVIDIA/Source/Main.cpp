@@ -9,14 +9,14 @@
 //
 //*********************************************************
 
-#include "stdafx.h"
-#include "D3D12Reflection.h"
+#include "Utils.h"
+#include "AppWindow.h"
 #include "Win32Application.h"
 
 _Use_decl_annotations_
 
 int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE, LPSTR, const int nShowCmd)
 {
-	D3D12Reflection sample(1280, 720, L"AnitoTracer");
+	AppWindow sample(1280, 720, L"AnitoTracer");
 	return Win32Application::Run(&sample, hInstance, nShowCmd);
 }

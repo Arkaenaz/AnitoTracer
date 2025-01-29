@@ -1,11 +1,11 @@
-#include "stdafx.h"
-#include "DXSample.h"
+#include "Utils.h"
+#include "Window.h"
 #include <codecvt>
 #include "Win32Application.h"
 
 using namespace Microsoft::WRL;
 
-DXSample::DXSample(const UINT width, const UINT height, const std::wstring name) :
+Window::Window(const UINT width, const UINT height, const std::wstring name) :
 	m_width(width),
 	m_height(height),
 	m_useWarpDevice(false),
@@ -15,18 +15,18 @@ DXSample::DXSample(const UINT width, const UINT height, const std::wstring name)
 }
 
 // Helper function for setting the window's title text.
-void DXSample::SetCustomWindowText(const LPCWSTR text) const
+void Window::SetCustomWindowText(const LPCWSTR text) const
 {
 	const std::wstring windowText = m_title + L": " + text;
 	SetWindowText(Win32Application::GetHwnd(), windowText.c_str());
 }
 
-void DXSample::msgBox(const std::string& msg)
+void Window::msgBox(const std::string& msg)
 {
 	MessageBoxA(Win32Application::GetHwnd(), msg.c_str(), "Error", MB_OK);
 }
 
-void DXSample::d3dTraceHR(const std::string& msg, const HRESULT hr)
+void Window::d3dTraceHR(const std::string& msg, const HRESULT hr)
 {
 	char hr_msg[512];
 	FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, hr, 0, hr_msg, NV_ARRAYSIZE(hr_msg), nullptr);
@@ -35,24 +35,26 @@ void DXSample::d3dTraceHR(const std::string& msg, const HRESULT hr)
 	msgBox(error_msg);
 }
 
-std::wstring DXSample::string_2_wstring(const std::string& s)
+std::wstring string_to_wstring(const std::string& str)
 {
-	std::wstring_convert<std::codecvt_utf8<WCHAR>> cvt;
-	std::wstring ws = cvt.from_bytes(s);
-	return ws;
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.length(), NULL, 0);
+	std::wstring wstr(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.length(), &wstr[0], size_needed);
+	return wstr;
 }
 
-std::string DXSample::wstring_2_string(const std::wstring& ws)
+std::string wstring_to_string(const std::wstring& wstr)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-	std::string s = cvt.to_bytes(ws);
-	return s;
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), NULL, 0, NULL, NULL);
+	std::string str(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), &str[0], size_needed, NULL, NULL);
+	return str;
 }
 
 // Helper function for parsing any supplied command line args.
 _Use_decl_annotations_
 
-void DXSample::ParseCommandLineArgs(WCHAR* argv[], const int argc)
+void Window::ParseCommandLineArgs(WCHAR* argv[], const int argc)
 {
 	for (int i = 1; i < argc; ++i)
 	{

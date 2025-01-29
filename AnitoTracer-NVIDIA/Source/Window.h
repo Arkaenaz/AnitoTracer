@@ -3,11 +3,11 @@
 #include <dxgi1_6.h>
 #include <string>
 
-class DXSample
+class Window
 {
 public:
-	DXSample(UINT width, UINT height, std::wstring name);
-	virtual ~DXSample() = default;
+	Window(UINT width, UINT height, std::wstring name);
+	virtual ~Window() = default;
 
 	virtual void OnInit() = 0;
 	virtual void OnUpdate() = 0;

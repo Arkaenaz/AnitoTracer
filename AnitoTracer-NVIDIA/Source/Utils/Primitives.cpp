@@ -6,7 +6,7 @@
 
 #include "_externals/glm/glm/fwd.hpp"
 #include "_externals/glm/glm/geometric.hpp"
-#include "Source/DXSample.h"
+#include "Source/Window.h"
 
 DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createSphere(const float diameter,
                                                                      const int tessellation,

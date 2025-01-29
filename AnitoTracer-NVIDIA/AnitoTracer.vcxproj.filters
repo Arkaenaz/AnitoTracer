@@ -36,13 +36,13 @@
     <ClInclude Include="Source\Dx12\InterfacePointers.h">
       <Filter>Header Files\Dx12</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DXSample.h">
+    <ClInclude Include="Source\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DXSampleHelper.h">
+    <ClInclude Include="Source\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\stdafx.h">
+    <ClInclude Include="Source\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Win32Application.h">
@@ -93,7 +93,7 @@
     <ClInclude Include="Source\Utils\Primitives.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Source\D3D12Reflection.h">
+    <ClInclude Include="Source\AppWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -106,13 +106,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DXSample.cpp">
+    <ClCompile Include="Source\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\stdafx.cpp">
+    <ClCompile Include="Source\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Win32Application.cpp">
@@ -130,7 +130,7 @@
     <ClCompile Include="Source\Utils\Primitives.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Source\D3D12Reflection.cpp">
+    <ClCompile Include="Source\AppWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

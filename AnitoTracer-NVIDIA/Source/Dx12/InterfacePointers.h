@@ -12,7 +12,7 @@
 #include <dxgi.h>
 #include <dxgi1_6.h>
 #include <dxcapi.h>
-#include "../stdafx.h"
+#include "../Utils.h"
 
 namespace SampleFramework
 {

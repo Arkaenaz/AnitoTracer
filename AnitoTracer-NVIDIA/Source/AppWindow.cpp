@@ -1,6 +1,6 @@
-#include "D3D12Reflection.h"
+#include "AppWindow.h"
 
-#include "stdafx.h"
+#include "Utils.h"
 #include "Win32Application.h"
 #include "_externals/glm/glm/gtx/transform.hpp"
 #include "_externals/glm/glm/gtx/euler_angles.hpp"
@@ -15,14 +15,14 @@
 #include "Utils/Structs/ShaderConfig.h"
 #include "Utils/Structs/VertexPositionNormalTangentTexture.h"
 
-D3D12Reflection::D3D12Reflection(const UINT width, const UINT height,
+AppWindow::AppWindow(const UINT width, const UINT height,
                          const std::wstring name)
-	: DXSample(width, height, name)
+	: Window(width, height, name)
 {
 	mSwapChainSize = glm::uvec2(GetWidth(), GetHeight());
 }
 
-void D3D12Reflection::OnInit()
+void AppWindow::OnInit()
 {
 	const HWND mHwnd = Win32Application::GetHwnd();
 	const UINT winWidth = GetWidth();
@@ -107,12 +107,12 @@ void D3D12Reflection::OnInit()
 	createShaderTable();
 }
 
-void D3D12Reflection::OnUpdate()
+void AppWindow::OnUpdate()
 {
 	//Not used in this tutorial
 }
 
-void D3D12Reflection::OnRender()
+void AppWindow::OnRender()
 {
 	const uint32_t rtvIndex = BeginFrame();
 
@@ -170,7 +170,7 @@ void D3D12Reflection::OnRender()
 	EndFrame(rtvIndex);
 }
 
-void D3D12Reflection::OnDestroy()
+void AppWindow::OnDestroy()
 {
 	// Wait for the command queue to finish execution
 	mFenceValue++;
@@ -179,7 +179,7 @@ void D3D12Reflection::OnDestroy()
 	WaitForSingleObject(mFenceEvent, INFINITE);
 }
 
-uint32_t D3D12Reflection::BeginFrame() const
+uint32_t AppWindow::BeginFrame() const
 {
 	// Bind the descriptor heaps
 	ID3D12DescriptorHeap* heaps[] = {mpSrvUavHeap.Get()};
@@ -187,7 +187,7 @@ uint32_t D3D12Reflection::BeginFrame() const
 	return mpSwapChain->GetCurrentBackBufferIndex();
 }
 
-void D3D12Reflection::EndFrame(const uint32_t rtvIndex)
+void AppWindow::EndFrame(const uint32_t rtvIndex)
 {
 	DirectXUtil::D3D12GraphicsContext::resourceBarrier(
 		mpCmdList,
@@ -213,7 +213,7 @@ void D3D12Reflection::EndFrame(const uint32_t rtvIndex)
 	mpCmdList->Reset(mFrameObjects[bufferIndex].pCmdAllocator.Get(), nullptr);
 }
 
-SampleFramework::ID3D12RootSignaturePtr D3D12Reflection::createRootSignature(
+SampleFramework::ID3D12RootSignaturePtr AppWindow::createRootSignature(
 	SampleFramework::ID3D12Device5Ptr pDevice, const D3D12_ROOT_SIGNATURE_DESC& desc)
 {
 	SampleFramework::ID3DBlobPtr pSigBlob;
@@ -238,7 +238,7 @@ SampleFramework::ID3D12RootSignaturePtr D3D12Reflection::createRootSignature(
 	return pRootSig;
 }
 
-void D3D12Reflection::createAccelerationStructures()
+void AppWindow::createAccelerationStructures()
 {
 	//Create the two bottom level AS
 	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPlaneBottomLevelAS(
@@ -267,7 +267,7 @@ void D3D12Reflection::createAccelerationStructures()
 	mpCmdList->Reset(mFrameObjects[0].pCmdAllocator.Get(), nullptr);
 }
 
-void D3D12Reflection::createRtPipelineState()
+void AppWindow::createRtPipelineState()
 {
 	// Need 12 subobjects:
 	//  1 for the DXIL library
@@ -358,7 +358,7 @@ void D3D12Reflection::createRtPipelineState()
 	NV_D3D_CALL(mpDevice->CreateStateObject(&desc, IID_PPV_ARGS(&mpPipelineState)));
 }
 
-void D3D12Reflection::createShaderTable()
+void AppWindow::createShaderTable()
 {
 	/** The shader-table layout is as follows:
 		Entry 0 - Ray-gen program
@@ -418,7 +418,7 @@ void D3D12Reflection::createShaderTable()
 	mpShaderTable->Unmap(0, nullptr);
 }
 
-void D3D12Reflection::createShaderResources()
+void AppWindow::createShaderResources()
 {
 	// Create the output resource. The dimensions and format should match the swap-chain
 	D3D12_RESOURCE_DESC resDesc = {};

@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,12 +125,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\D3D12Reflection.h" />
+    <ClInclude Include="Source\AppWindow.h" />
     <ClInclude Include="Source\Dx12\InterfacePointers.h" />
     <ClInclude Include="Source\DXCAPI\dxcapi.use.h" />
-    <ClInclude Include="Source\DXSample.h" />
-    <ClInclude Include="Source\DXSampleHelper.h" />
-    <ClInclude Include="Source\stdafx.h" />
+    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\Helper.h" />
+    <ClInclude Include="Source\Utils.h" />
     <ClInclude Include="Source\Utils\AccelerationStructures.h" />
     <ClInclude Include="Source\Utils\D3D12GraphicsContext.h" />
     <ClInclude Include="Source\Utils\Primitives.h" />
@@ -160,10 +160,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\D3D12Reflection.cpp" />
-    <ClCompile Include="Source\DXSample.cpp" />
+    <ClCompile Include="Source\AppWindow.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\stdafx.cpp" />
+    <ClCompile Include="Source\Utils.cpp" />
     <ClCompile Include="Source\Utils\AccelerationStructures.cpp" />
     <ClCompile Include="Source\Utils\D3D12GraphicsContext.cpp" />
     <ClCompile Include="Source\Utils\Primitives.cpp" />

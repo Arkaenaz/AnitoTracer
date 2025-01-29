@@ -9,13 +9,13 @@
 //
 //*********************************************************
 
-#include "stdafx.h"
+#include "Utils.h"
 
 #include "Win32Application.h"
 
 HWND Win32Application::m_hwnd = nullptr;
 
-int Win32Application::Run(DXSample* pSample, const HINSTANCE hInstance,
+int Win32Application::Run(Window* pSample, const HINSTANCE hInstance,
                           const int nCmdShow)
 {
 	// Parse the command line parameters
@@ -50,7 +50,7 @@ int Win32Application::Run(DXSample* pSample, const HINSTANCE hInstance,
 	                      hInstance, pSample);
 
 	// Initialize the sample. OnInit is defined in each child-implementation of
-	// DXSample.
+	// Window.
 	pSample->OnInit();
 
 	ShowWindow(m_hwnd, nCmdShow);
@@ -77,14 +77,14 @@ int Win32Application::Run(DXSample* pSample, const HINSTANCE hInstance,
 LRESULT CALLBACK Win32Application::WindowProc(const HWND hWnd, const UINT message,
                                               const WPARAM wParam, const LPARAM lParam)
 {
-	DXSample* pSample =
-		reinterpret_cast<DXSample*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Window* pSample =
+		reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	switch (message)
 	{
 	case WM_CREATE:
 		{
-			// Save the DXSample* passed in to CreateWindow.
+			// Save the Window* passed in to CreateWindow.
 			LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 			SetWindowLongPtr(hWnd, GWLP_USERDATA,
 			                 reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
