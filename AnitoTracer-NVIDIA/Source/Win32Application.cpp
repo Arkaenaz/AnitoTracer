@@ -13,6 +13,8 @@
 
 #include "Win32Application.h"
 
+#include "imgui.h"
+
 HWND Win32Application::m_hwnd = nullptr;
 
 int Win32Application::Run(Window* pSample, const HINSTANCE hInstance,
@@ -73,10 +75,16 @@ int Win32Application::Run(Window* pSample, const HINSTANCE hInstance,
 	return static_cast<char>(msg.wParam);
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 // Main message handler for the sample.
 LRESULT CALLBACK Win32Application::WindowProc(const HWND hWnd, const UINT message,
                                               const WPARAM wParam, const LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
+		return true;
+	}
+
 	Window* pSample =
 		reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 

@@ -15,8 +15,105 @@
 #include "Utils/Structs/ShaderConfig.h"
 #include "Utils/Structs/VertexPositionNormalTangentTexture.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+
+struct FrameContext
+{
+	ID3D12CommandAllocator* CommandAllocator;
+	UINT64                      FenceValue;
+};
+
+// Simple free list based allocator
+struct ExampleDescriptorHeapAllocator
+{
+	ID3D12DescriptorHeap* Heap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_TYPE  HeapType = D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES;
+	D3D12_CPU_DESCRIPTOR_HANDLE HeapStartCpu;
+	D3D12_GPU_DESCRIPTOR_HANDLE HeapStartGpu;
+	UINT                        HeapHandleIncrement;
+	ImVector<int>               FreeIndices;
+
+	void Create(ID3D12Device* device, ID3D12DescriptorHeap* heap)
+	{
+		IM_ASSERT(Heap == nullptr && FreeIndices.empty());
+		Heap = heap;
+		D3D12_DESCRIPTOR_HEAP_DESC desc = heap->GetDesc();
+		HeapType = desc.Type;
+		HeapStartCpu = Heap->GetCPUDescriptorHandleForHeapStart();
+		HeapStartGpu = Heap->GetGPUDescriptorHandleForHeapStart();
+		HeapHandleIncrement = device->GetDescriptorHandleIncrementSize(HeapType);
+		FreeIndices.reserve((int)desc.NumDescriptors);
+		for (int n = desc.NumDescriptors; n > 0; n--)
+			FreeIndices.push_back(n);
+	}
+	void Destroy()
+	{
+		Heap = nullptr;
+		FreeIndices.clear();
+	}
+	void Alloc(D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_desc_handle)
+	{
+		IM_ASSERT(FreeIndices.Size > 0);
+		int idx = FreeIndices.back();
+		FreeIndices.pop_back();
+		out_cpu_desc_handle->ptr = HeapStartCpu.ptr + (idx * HeapHandleIncrement);
+		out_gpu_desc_handle->ptr = HeapStartGpu.ptr + (idx * HeapHandleIncrement);
+	}
+	void Free(D3D12_CPU_DESCRIPTOR_HANDLE out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE out_gpu_desc_handle)
+	{
+		int cpu_idx = (int)((out_cpu_desc_handle.ptr - HeapStartCpu.ptr) / HeapHandleIncrement);
+		int gpu_idx = (int)((out_gpu_desc_handle.ptr - HeapStartGpu.ptr) / HeapHandleIncrement);
+		IM_ASSERT(cpu_idx == gpu_idx);
+		FreeIndices.push_back(cpu_idx);
+	}
+};
+
+// Data
+// static FrameContext                 g_frameContext[3] = {};
+ //static UINT                         g_frameIndex = 0;
+//
+// static ID3D12Device* g_pd3dDevice = nullptr;
+// static ID3D12DescriptorHeap* g_pd3dRtvDescHeap = nullptr;
+// static ID3D12DescriptorHeap* g_pd3dSrvDescHeap = nullptr;
+// static ExampleDescriptorHeapAllocator g_pd3dSrvDescHeapAlloc;
+// static ID3D12CommandQueue* g_pd3dCommandQueue = nullptr;
+// static ID3D12GraphicsCommandList* mpCmdList = nullptr;
+// static ID3D12Fence* g_fence = nullptr;
+// static HANDLE                       g_fenceEvent = nullptr;
+// static UINT64                       g_fenceLastSignaledValue = 0;
+// static IDXGISwapChain3* g_pSwapChain = nullptr;
+// static bool                         g_SwapChainOccluded = false;
+// static HANDLE                       g_hSwapChainWaitableObject = nullptr;
+// static ID3D12Resource* g_mainRenderTargetResource[2] = {};
+// static D3D12_CPU_DESCRIPTOR_HANDLE  g_mainRenderTargetDescriptor[2] = {};
+
+// FrameContext* WaitForNextFrameResources()
+// {
+// 	UINT nextFrameIndex = g_frameIndex + 1;
+// 	g_frameIndex = nextFrameIndex;
+//
+// 	HANDLE waitableObjects[] = { g_hSwapChainWaitableObject, nullptr };
+// 	DWORD numWaitableObjects = 1;
+//
+// 	FrameContext* frameCtx = &g_frameContext[nextFrameIndex % 3];
+// 	UINT64 fenceValue = frameCtx->FenceValue;
+// 	if (fenceValue != 0) // means no fence was signaled
+// 	{
+// 		frameCtx->FenceValue = 0;
+// 		g_fence->SetEventOnCompletion(fenceValue, g_fenceEvent);
+// 		waitableObjects[1] = g_fenceEvent;
+// 		numWaitableObjects = 2;
+// 	}
+//
+// 	WaitForMultipleObjects(numWaitableObjects, waitableObjects, TRUE, INFINITE);
+//
+// 	return frameCtx;
+// }
+
 AppWindow::AppWindow(const UINT width, const UINT height,
-                         const std::wstring name)
+	const std::wstring name)
 	: Window(width, height, name)
 {
 	mSwapChainSize = glm::uvec2(GetWidth(), GetHeight());
@@ -46,11 +143,11 @@ void AppWindow::OnInit()
 	mpDevice = D3D12UtilContext.createDevice(pDxgiFactory);
 	mpCmdQueue = D3D12UtilContext.createCommandQueue(mpDevice);
 	mpSwapChain = D3D12UtilContext.createDxgiSwapChain(pDxgiFactory, mHwnd, winWidth, winHeight,
-	                                                   DXGI_FORMAT_R8G8B8A8_UNORM, mpCmdQueue);
+		DXGI_FORMAT_R8G8B8A8_UNORM, mpCmdQueue);
 
 	// Create a RTV descriptor heap
 	mRtvHeap.pHeap = D3D12UtilContext.createDescriptorHeap(mpDevice, kRtvHeapSize, D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
-	                                                       false);
+		false);
 
 	// Create the per-frame objects
 	mFrameObjects.resize(DirectXUtil::D3D12GraphicsContext::getDefaultSwapChainBuffers());
@@ -105,6 +202,8 @@ void AppWindow::OnInit()
 	createShaderResources();
 
 	createShaderTable();
+
+	InitializeGUI();
 }
 
 void AppWindow::OnUpdate()
@@ -114,7 +213,12 @@ void AppWindow::OnUpdate()
 
 void AppWindow::OnRender()
 {
+	//OutputDebugString(std::to_string(mpCmdQueue ));
 	const uint32_t rtvIndex = BeginFrame();
+
+	ImGui_ImplDX12_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 
 	// Let's raytrace
 	DirectXUtil::D3D12GraphicsContext::resourceBarrier(
@@ -167,7 +271,67 @@ void AppWindow::OnRender()
 	);
 	mpCmdList->CopyResource(mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), mpOutputResource.Get());
 
-	EndFrame(rtvIndex);
+	ImGui::ShowDemoWindow();
+
+	// Rendering
+	ImGui::Render();
+
+	// FrameContext* frameCtx = WaitForNextFrameResources();
+	// UINT backBufferIdx = mpSwapChain->GetCurrentBackBufferIndex();
+	// frameCtx->CommandAllocator->Reset();
+
+	//mFrameObjects[rtvIndex].pCmdAllocator.Get()->Reset();
+
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = mFrameObjects[rtvIndex].pSwapChainBuffer.Get();
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//mpCmdList->Reset(mFrameObjects[rtvIndex].pCmdAllocator.Get(), nullptr);
+	mpCmdList->ResourceBarrier(1, &barrier);
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+	//D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = mRtvHeap.pHeap->GetCPUDescriptorHandleForHeapStart();
+
+	// Render Dear ImGui graphics
+	const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+	mpCmdList->ClearRenderTargetView(mFrameObjects[rtvIndex].rtvHandle, clear_color_with_alpha, 0, nullptr);
+	mpCmdList->OMSetRenderTargets(1, &mFrameObjects[rtvIndex].rtvHandle, FALSE, nullptr);
+	mpCmdList->SetDescriptorHeaps(1, &mpSrvUavHeap);
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mpCmdList.Get());
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	mpCmdList->ResourceBarrier(1, &barrier);
+	mpCmdList->Close();
+
+	mpCmdQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)mpCmdList.Get());
+
+	// Update and Render additional Platform Windows
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	// Present
+	HRESULT hr = mpSwapChain->Present(1, 0);   // Present with vsync
+	//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+	//g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
+
+	mpCmdList->Close();
+	ID3D12CommandList* pGraphicsList = mpCmdList.Get();
+	mpCmdQueue->ExecuteCommandLists(1, &pGraphicsList);
+	mFenceValue++;
+	mpCmdQueue->Signal(mpFence.Get(), mFenceValue);
+
+	// UINT64 fenceValue = g_fenceLastSignaledValue + 1;
+	// mpCmdQueue->Signal(g_fence, fenceValue);
+	// g_fenceLastSignaledValue = fenceValue;
+	// frameCtx->FenceValue = fenceValue;
+
+	//EndFrame(rtvIndex);
 }
 
 void AppWindow::OnDestroy()
@@ -179,10 +343,53 @@ void AppWindow::OnDestroy()
 	WaitForSingleObject(mFenceEvent, INFINITE);
 }
 
+AppWindow::ExampleDescriptorHeapAllocator AppWindow::g_pd3dSrvDescHeapAlloc;
+
+void AppWindow::InitializeGUI()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+	io.Fonts->AddFontDefault();
+
+	// D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle = nullptr;
+	// D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle = nullptr;
+	// g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle);
+
+	ImGui_ImplWin32_Init(Win32Application::GetHwnd());
+
+	ImGui_ImplDX12_InitInfo init_info = {};
+	init_info.Device = mpDevice.Get();
+	init_info.CommandQueue = mpCmdQueue.Get();
+	init_info.NumFramesInFlight = 3;
+	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
+	// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
+	// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
+	init_info.SrvDescriptorHeap = mpSrvUavHeap.Get();
+	init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
+	init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return g_pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
+	ImGui_ImplDX12_Init(&init_info);
+
+	// ImGui_ImplDX12_Init(
+	// 	mpDevice.Get(),
+	// 	// Number of frames in flight.
+	// 	3,
+	// 	DXGI_FORMAT_R8G8B8A8_UNORM,
+	// 	// imgui needs SRV descriptors for its font textures.
+	// 	mpSrvUavHeap.Get(),
+	// 	mpSrvUavHeap.Get()->GetCPUDescriptorHandleForHeapStart(),
+	// 	mpSrvUavHeap.Get()->GetGPUDescriptorHandleForHeapStart()
+	// 	);
+}
+
 uint32_t AppWindow::BeginFrame() const
 {
 	// Bind the descriptor heaps
-	ID3D12DescriptorHeap* heaps[] = {mpSrvUavHeap.Get()};
+	ID3D12DescriptorHeap* heaps[] = { mpSrvUavHeap.Get() };
 	mpCmdList->SetDescriptorHeaps(NV_ARRAYSIZE(heaps), heaps);
 	return mpSwapChain->GetCurrentBackBufferIndex();
 }
@@ -290,7 +497,7 @@ void AppWindow::createRtPipelineState()
 	subobjects[index++] = dxilLib.stateSubobject; // 0 Library
 
 	DirectXUtil::Structs::HitProgram hitProgram(nullptr, DirectXUtil::RTPipeline::kClosestHitShader,
-	                                            DirectXUtil::RTPipeline::kHitGroup);
+		DirectXUtil::RTPipeline::kHitGroup);
 	subobjects[index++] = hitProgram.subObject; // 1 Hit Group
 
 	// Create the ray-gen root-signature and association
@@ -300,7 +507,7 @@ void AppWindow::createRtPipelineState()
 
 	const uint32_t rgsRootIndex = index++; // 2
 	DirectXUtil::Structs::ExportAssociation rgsRootAssociation(&DirectXUtil::RTPipeline::kRayGenShader, 1,
-	                                                           &(subobjects[rgsRootIndex]));
+		&(subobjects[rgsRootIndex]));
 	subobjects[index++] = rgsRootAssociation.subobject; // 3 Associate Root Sig to RGS
 
 	// Create the hit root-signature and association
@@ -310,7 +517,7 @@ void AppWindow::createRtPipelineState()
 
 	const uint32_t hitRootIndex = index++; // 4
 	DirectXUtil::Structs::ExportAssociation hitRootAssociation(&DirectXUtil::RTPipeline::kClosestHitShader, 1,
-	                                                           &(subobjects[hitRootIndex]));
+		&(subobjects[hitRootIndex]));
 	subobjects[index++] = hitRootAssociation.subobject; // 6 Associate Hit Root Sig to Hit Group
 
 	// Create the miss root-signature and association
@@ -325,7 +532,7 @@ void AppWindow::createRtPipelineState()
 		DirectXUtil::RTPipeline::kShadowMiss
 	};
 	DirectXUtil::Structs::ExportAssociation missRootAssociation(missRootShaders, NV_ARRAYSIZE(missRootShaders),
-	                                                            &(subobjects[missRootIndex]));
+		&(subobjects[missRootIndex]));
 	subobjects[index++] = missRootAssociation.subobject; // 7 Associate Miss Root Sig to Miss Shader
 
 	// Bind the payload size to all programs
@@ -341,7 +548,7 @@ void AppWindow::createRtPipelineState()
 		DirectXUtil::RTPipeline::kShadowMiss
 	};
 	DirectXUtil::Structs::ExportAssociation configAssociation(shaderExports, NV_ARRAYSIZE(shaderExports),
-	                                                          &(subobjects[shaderConfigIndex]));
+		&(subobjects[shaderConfigIndex]));
 	subobjects[index++] = configAssociation.subobject; // 9 Associate Shader Config to Miss, CHS, RGS
 
 	// Create the pipeline config
@@ -397,24 +604,24 @@ void AppWindow::createShaderTable()
 
 	// Entry 0 - ray-gen program ID and descriptor data
 	memcpy(pData, pRtsoProps->GetShaderIdentifier(DirectXUtil::RTPipeline::kRayGenShader),
-	       D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+		D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 	const uint64_t heapStart = mpSrvUavHeap->GetGPUDescriptorHandleForHeapStart().ptr;
 	*reinterpret_cast<uint64_t*>(pData + D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES) = heapStart;
 
 	// Entry 1 - primary ray miss
 	pData += mShaderTableEntrySize;
 	memcpy(pData, pRtsoProps->GetShaderIdentifier(DirectXUtil::RTPipeline::kMissShader),
-	       D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+		D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	// Entry 2 - miss program
 	pData += mShaderTableEntrySize; // +1 skips ray-gen
 	memcpy(pData, pRtsoProps->GetShaderIdentifier(DirectXUtil::RTPipeline::kShadowMiss),
-	       D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+		D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 
 	// Entry 3 - hit program
 	pData += mShaderTableEntrySize;
 	memcpy(pData, pRtsoProps->GetShaderIdentifier(DirectXUtil::RTPipeline::kHitGroup),
-	       D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
+		D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);
 	const uint64_t heapStartHit = mpSrvUavHeap->GetGPUDescriptorHandleForHeapStart().ptr;
 	*reinterpret_cast<uint64_t*>(pData + D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES) = heapStartHit;
 
@@ -451,6 +658,7 @@ void AppWindow::createShaderResources()
 	// Create an SRV/UAV/VertexSRV/IndexSRV descriptor heap. Need 4 entries - 1 SRV for the scene, 1 UAV for the output, 1 SRV for VertexBuffer, 1 SRV for IndexBuffer
 	mpSrvUavHeap = D3D12UtilContext.createDescriptorHeap(mpDevice, 4, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
 
+
 	// Create the UAV. Based on the root signature we created it should be the first entry
 	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
@@ -460,6 +668,7 @@ void AppWindow::createShaderResources()
 		&uavDesc,
 		mpSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
 	);
+
 
 	// Create the TLAS SRV right after the UAV. Note that we are using a different SRV desc here
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -499,4 +708,6 @@ void AppWindow::createShaderResources()
 	srvHandle.ptr += mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	vertexSRVHandle = srvHandle;
 	mpDevice->CreateShaderResourceView(primitiveRes->vertexBuffer.Get(), &vertexSRVDesc, vertexSRVHandle);
+
+	g_pd3dSrvDescHeapAlloc.Create(mpDevice.Get(), mpSrvUavHeap.Get());
 }

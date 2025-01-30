@@ -58,7 +58,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);..\Library\imgui;..\Library\imgui\backends</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -125,6 +125,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Library\imgui\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="..\Library\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\Library\imgui\imconfig.h" />
+    <ClInclude Include="..\Library\imgui\imgui.h" />
+    <ClInclude Include="..\Library\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Library\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Library\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Library\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\AppWindow.h" />
     <ClInclude Include="Source\Dx12\InterfacePointers.h" />
     <ClInclude Include="Source\DXCAPI\dxcapi.use.h" />
@@ -160,6 +168,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Library\imgui\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\Library\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Library\imgui\imgui.cpp" />
+    <ClCompile Include="..\Library\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Library\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Library\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\AppWindow.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\Main.cpp" />
