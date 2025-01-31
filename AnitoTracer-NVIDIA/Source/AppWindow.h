@@ -60,7 +60,7 @@ private:
 	uint64_t mTlasSize = 0;
 
 	void createRtPipelineState();
-	SampleFramework::ID3D12StateObjectPtr mpPipelineState;
+	SampleFramework::ID3D12StateObjectPtr mpRtPipelineState;
 	SampleFramework::ID3D12RootSignaturePtr mpEmptyRootSig;
 
 	void createShaderTable();
@@ -78,4 +78,12 @@ private:
 
 	D3D12_CPU_DESCRIPTOR_HANDLE indexSRVHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE vertexSRVHandle;
+
+	// Graphics Pipeline
+	bool mIsRayTracing = false;
+
+	void createGraphicsPipelineState();
+	SampleFramework::ID3D12RootSignaturePtr mpGraphicsRootSig;
+	SampleFramework::ID3D12PipelineStatePtr mpGraphicsPipelineState;
+
 };

@@ -241,6 +241,27 @@ DirectXUtil::Primitives::Shape DirectXUtil::Primitives::createCube(const float s
 			tangent,
 			texCoord[j + 3]
 		);
+
+		// Other
+		returnCubeInfo.otherVertexData.emplace_back(
+			(normal - side1 - side2) * sideOverTwo,
+			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		);
+
+		returnCubeInfo.otherVertexData.emplace_back(
+			(normal - side1 + side2) * sideOverTwo,
+			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		);
+
+		returnCubeInfo.otherVertexData.emplace_back(
+			(normal + side1 + side2) * sideOverTwo,
+			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		);
+
+		returnCubeInfo.otherVertexData.emplace_back(
+			(normal + side1 - side2)* sideOverTwo,
+			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		);
 	}
 
 	calculateTangentSpace(returnCubeInfo);

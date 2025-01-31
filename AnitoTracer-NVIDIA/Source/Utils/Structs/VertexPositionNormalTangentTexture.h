@@ -1,5 +1,7 @@
 #pragma once
 
+#include <_externals/glm/glm/vec4.hpp>
+
 #include "_externals/glm/glm/vec2.hpp"
 #include "_externals/glm/glm/vec3.hpp"
 
@@ -24,6 +26,20 @@ namespace DirectXUtil
 			}
 
 			VertexPositionNormalTangentTexture() = default;
+		};
+
+		struct VertexPositionColor
+		{
+			glm::vec3 position;
+			glm::vec4 color;
+
+			VertexPositionColor(const glm::vec3 pos, const glm::vec4 col)
+			{
+				position = pos;
+				color = col;
+			}
+
+			VertexPositionColor() = default;
 		};
 	}
 }

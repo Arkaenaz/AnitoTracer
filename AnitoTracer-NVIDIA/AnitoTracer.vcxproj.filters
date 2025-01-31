@@ -96,6 +96,9 @@
     <ClInclude Include="Source\AppWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Utils\GraphicsPipeline.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Shaders.hlsl">
@@ -132,6 +135,9 @@
     </ClCompile>
     <ClCompile Include="Source\AppWindow.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utils\GraphicsPipeline.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,7 +5,9 @@
 #include "_externals/glm/glm/gtx/transform.hpp"
 #include "_externals/glm/glm/gtx/euler_angles.hpp"
 #include <array>
+
 #include "Utils/AccelerationStructures.h"
+#include "Utils/GraphicsPipeline.h"
 #include "Utils/RTPipeline.h"
 #include "Utils/Structs/ExportAssociation.h"
 #include "Utils/Structs/GlobalRootSignature.h"
@@ -100,6 +102,8 @@ void AppWindow::OnInit()
 	NV_D3D_CALL(mpDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&mpFence)));
 	mFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
+	createGraphicsPipelineState();
+
 	createAccelerationStructures();
 
 	createRtPipelineState();
@@ -120,57 +124,76 @@ void AppWindow::OnRender()
 {
 	const uint32_t rtvIndex = BeginFrame();
 
-	// Let's raytrace
-	DirectXUtil::D3D12GraphicsContext::resourceBarrier(
-		mpCmdList,
-		mpOutputResource,
-		D3D12_RESOURCE_STATE_COPY_SOURCE,
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS
-	);
-	D3D12_DISPATCH_RAYS_DESC raytraceDesc = {};
-	raytraceDesc.Width = mSwapChainSize.x;
-	raytraceDesc.Height = mSwapChainSize.y;
-	raytraceDesc.Depth = 1;
+	if (mIsRayTracing) {
+		// Let's raytrace
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(
+			mpCmdList,
+			mpOutputResource,
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS
+		);
+		D3D12_DISPATCH_RAYS_DESC raytraceDesc = {};
+		raytraceDesc.Width = mSwapChainSize.x;
+		raytraceDesc.Height = mSwapChainSize.y;
+		raytraceDesc.Depth = 1;
 
-	// RayGen is the first entry in the shader-table
-	raytraceDesc.RayGenerationShaderRecord.StartAddress =
-		mpShaderTable->GetGPUVirtualAddress() + 0 * mShaderTableEntrySize;
-	raytraceDesc.RayGenerationShaderRecord.SizeInBytes = mShaderTableEntrySize;
+		// RayGen is the first entry in the shader-table
+		raytraceDesc.RayGenerationShaderRecord.StartAddress =
+			mpShaderTable->GetGPUVirtualAddress() + 0 * mShaderTableEntrySize;
+		raytraceDesc.RayGenerationShaderRecord.SizeInBytes = mShaderTableEntrySize;
 
-	// Miss is the second entry in the shader-table
-	const size_t missOffset = 1 * mShaderTableEntrySize;
-	raytraceDesc.MissShaderTable.StartAddress = mpShaderTable->GetGPUVirtualAddress() + missOffset;
-	raytraceDesc.MissShaderTable.StrideInBytes = mShaderTableEntrySize;
-	raytraceDesc.MissShaderTable.SizeInBytes = mShaderTableEntrySize * 2;
+		// Miss is the second entry in the shader-table
+		const size_t missOffset = 1 * mShaderTableEntrySize;
+		raytraceDesc.MissShaderTable.StartAddress = mpShaderTable->GetGPUVirtualAddress() + missOffset;
+		raytraceDesc.MissShaderTable.StrideInBytes = mShaderTableEntrySize;
+		raytraceDesc.MissShaderTable.SizeInBytes = mShaderTableEntrySize * 2;
 
-	// Hit is the fourth entry in the shader-table
-	const size_t hitOffset = 3 * mShaderTableEntrySize;
-	raytraceDesc.HitGroupTable.StartAddress = mpShaderTable->GetGPUVirtualAddress() + hitOffset;
-	raytraceDesc.HitGroupTable.StrideInBytes = mShaderTableEntrySize;
-	raytraceDesc.HitGroupTable.SizeInBytes = mShaderTableEntrySize * 1;
+		// Hit is the fourth entry in the shader-table
+		const size_t hitOffset = 3 * mShaderTableEntrySize;
+		raytraceDesc.HitGroupTable.StartAddress = mpShaderTable->GetGPUVirtualAddress() + hitOffset;
+		raytraceDesc.HitGroupTable.StrideInBytes = mShaderTableEntrySize;
+		raytraceDesc.HitGroupTable.SizeInBytes = mShaderTableEntrySize * 1;
 
-	// Bind the empty root signature
-	mpCmdList->SetComputeRootSignature(mpEmptyRootSig.Get());
+		// Bind the empty root signature
+		mpCmdList->SetComputeRootSignature(mpEmptyRootSig.Get());
 
-	// Dispatch
-	mpCmdList->SetPipelineState1(mpPipelineState.Get());
-	mpCmdList->DispatchRays(&raytraceDesc);
+		// Dispatch
+		mpCmdList->SetPipelineState1(mpRtPipelineState.Get());
+		mpCmdList->DispatchRays(&raytraceDesc);
 
-	// Copy the results to the back-buffer
-	DirectXUtil::D3D12GraphicsContext::resourceBarrier(
-		mpCmdList,
-		mpOutputResource,
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
-		D3D12_RESOURCE_STATE_COPY_SOURCE
-	);
-	DirectXUtil::D3D12GraphicsContext::resourceBarrier(
-		mpCmdList,
-		mFrameObjects[rtvIndex].pSwapChainBuffer,
-		D3D12_RESOURCE_STATE_PRESENT,
-		D3D12_RESOURCE_STATE_COPY_DEST
-	);
-	mpCmdList->CopyResource(mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), mpOutputResource.Get());
+		// Copy the results to the back-buffer
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(
+			mpCmdList,
+			mpOutputResource,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+			D3D12_RESOURCE_STATE_COPY_SOURCE
+		);
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(
+			mpCmdList,
+			mFrameObjects[rtvIndex].pSwapChainBuffer,
+			D3D12_RESOURCE_STATE_PRESENT,
+			D3D12_RESOURCE_STATE_COPY_DEST
+		);
+		mpCmdList->CopyResource(mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), mpOutputResource.Get());
+	}
+	else
+	{
+		mpCmdList->SetGraphicsRootSignature(mpGraphicsRootSig.Get());
+		mpCmdList->SetPipelineState(mpGraphicsPipelineState.Get());
 
+		FLOAT clearColor[] = { 0.0f, 0.0f, 0.0f, 1 };
+
+		mpCmdList->OMSetRenderTargets(1, &mFrameObjects[rtvIndex].rtvHandle, FALSE, nullptr);
+		mpCmdList->ClearRenderTargetView(mFrameObjects[rtvIndex].rtvHandle, clearColor, 0, nullptr);
+
+		mpCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		/*D3D12_VERTEX_BUFFER_VIEW vertexBufferView = this->vertexBuffer->getVertexBufferView();
+		mpCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
+		mpCmdList->DrawInstanced(3, 1, 0, 0);*/
+	}
 	EndFrame(rtvIndex);
 }
 
@@ -363,7 +386,7 @@ void AppWindow::createRtPipelineState()
 	desc.pSubobjects = subobjects.data();
 	desc.Type = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE;
 
-	NV_D3D_CALL(mpDevice->CreateStateObject(&desc, IID_PPV_ARGS(&mpPipelineState)));
+	NV_D3D_CALL(mpDevice->CreateStateObject(&desc, IID_PPV_ARGS(&mpRtPipelineState)));
 }
 
 void AppWindow::createShaderTable()
@@ -397,7 +420,7 @@ void AppWindow::createShaderTable()
 	NV_D3D_CALL(mpShaderTable->Map(0, nullptr, reinterpret_cast<void**>(&pData)));
 
 	SampleFramework::ID3D12StateObjectPropertiesPtr pRtsoProps;
-	mpPipelineState->QueryInterface(IID_PPV_ARGS(&pRtsoProps));
+	mpRtPipelineState->QueryInterface(IID_PPV_ARGS(&pRtsoProps));
 
 	// Entry 0 - ray-gen program ID and descriptor data
 	memcpy(pData, pRtsoProps->GetShaderIdentifier(DirectXUtil::RTPipeline::kRayGenShader),
@@ -503,4 +526,49 @@ void AppWindow::createShaderResources()
 	srvHandle.ptr += mpDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	vertexSRVHandle = srvHandle;
 	mpDevice->CreateShaderResourceView(primitiveRes->vertexBuffer.Get(), &vertexSRVDesc, vertexSRVHandle);
+}
+
+void AppWindow::createGraphicsPipelineState()
+{
+	mpGraphicsRootSig = createRootSignature(mpDevice, DirectXUtil::GraphicsPipeline::createGraphicsRootSigDesc());
+
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = 
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+	};
+
+	std::wstring fullPath = std::filesystem::absolute(L"shaders/GraphicsShaders.hlsl");
+
+	ID3DBlob* vertexBlob = nullptr;
+	ID3DBlob* pixelBlob = nullptr;
+
+	D3D12_SHADER_BYTECODE vertexShaderByteCode = DirectXUtil::GraphicsPipeline::compileVertexShader(fullPath.c_str(), "VSMain", vertexBlob);
+	D3D12_SHADER_BYTECODE pixelShaderByteCode = DirectXUtil::GraphicsPipeline::compileVertexShader(fullPath.c_str(), "PSMain", pixelBlob);
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsDesc = {};
+	graphicsDesc.pRootSignature = mpGraphicsRootSig.Get();
+	graphicsDesc.VS = vertexShaderByteCode;
+	graphicsDesc.PS = pixelShaderByteCode;
+	graphicsDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+	graphicsDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
+	graphicsDesc.NodeMask = 0;
+	graphicsDesc.SampleDesc.Count = 1;
+	graphicsDesc.SampleDesc.Quality = 0;
+	graphicsDesc.SampleMask = UINT_MAX;
+	graphicsDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+	graphicsDesc.RasterizerState = DirectXUtil::GraphicsPipeline::createDefaultRasterizerDesc();
+	graphicsDesc.BlendState = DirectXUtil::GraphicsPipeline::createDefaultBlendDesc();
+	graphicsDesc.DepthStencilState.DepthEnable = FALSE;
+	graphicsDesc.DepthStencilState.StencilEnable = FALSE;
+	graphicsDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsDesc.NumRenderTargets = 1;
+	graphicsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	NV_D3D_CALL(mpDevice->CreateGraphicsPipelineState(&graphicsDesc, IID_PPV_ARGS(&mpGraphicsPipelineState)));
+
+	if (vertexBlob)
+		vertexBlob->Release();
+	if (pixelBlob)
+		pixelBlob->Release();
 }

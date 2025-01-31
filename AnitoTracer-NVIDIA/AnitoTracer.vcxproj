@@ -132,6 +132,7 @@
     <ClInclude Include="Source\DXCAPI\dxcapi.use.h" />
     <ClInclude Include="Source\Math.h" />
     <ClInclude Include="Source\Object.h" />
+    <ClInclude Include="Source\Utils\GraphicsPipeline.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\Helper.h" />
     <ClInclude Include="Source\Utils.h" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CameraManager.cpp" />
+    <ClCompile Include="Source\Utils\GraphicsPipeline.cpp" />
     <ClCompile Include="Source\AppWindow.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Object.cpp" />

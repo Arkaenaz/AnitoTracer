@@ -15,6 +15,7 @@ namespace DirectXUtil
 		struct Shape
 		{
 			std::vector<Structs::VertexPositionNormalTangentTexture> vertexData;
+			std::vector<Structs::VertexPositionColor> otherVertexData;
 			std::vector<unsigned short> indexData;
 		};
 
