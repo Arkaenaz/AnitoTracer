@@ -1,6 +1,7 @@
 #include "Object.h"
 
 #include "CameraManager.h"
+#include "Math.h"
 
 Object::Object(std::string name, ObjectType type)
 	: name(name), type(type)
@@ -42,11 +43,35 @@ void Object::CalculateWorldMatrix()
 {
 	this->mats.world = glm::mat4(1.f);
 
-	// TODO: Scale Matrix
-	// TODO: Rotation Matrix
-	// TODO: Translation Matrix
+	// Scale
+	glm::mat4 scale = glm::mat4(1.0f);
+	scale = SetToMatScale(this->transform.scale);
 
-	// TODO: Multiply the matrices to the world matrix.
+	// Rotation
+	glm::mat4 rotation = glm::mat4(1.0f);
+	glm::mat4 temp = glm::mat4(1.0f);
+
+	temp = SetToMatRotationX(this->transform.rotation.x);
+	rotation *= temp;
+
+	temp = glm::mat4(1.0f);
+	temp = SetToMatRotationY(this->transform.rotation.y);
+	rotation *= temp;
+
+	temp = glm::mat4(1.0f);
+	temp = SetToMatRotationZ(this->transform.rotation.z);
+	rotation *= temp;
+
+	// Translate
+	glm::mat4 translate = glm::mat4(1.0f);
+	translate = SetToMatTranslation(transform.position);
+
+	//std::cout << name << " calcWorldMatrix(): Scaling." << std::endl;
+	this->mats.world *= scale;
+	//std::cout << name << " calcWorldMatrix(): Rotating." << std::endl;
+	this->mats.world *= rotation;
+	//std::cout << name << " calcWorldMatrix(): Translating." << std::endl;
+	this->mats.world *= translate;
 }
 
 void Object::Translate(glm::vec3 offset, float speed)
