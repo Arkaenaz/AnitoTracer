@@ -3,7 +3,7 @@
 #include "_externals/glm/glm/vec3.hpp"
 #include "_externals/glm/glm/mat4x4.hpp"
 
-glm::mat4 SetToMatTranslation(glm::vec3 pos)
+inline glm::mat4 SetToMatTranslation(glm::vec3 pos)
 {
 	glm::mat4 mat = glm::mat4(1.f);
 	mat[3][0] = pos.x;
@@ -13,7 +13,7 @@ glm::mat4 SetToMatTranslation(glm::vec3 pos)
 	return mat;
 }
 
-glm::mat4 SetToMatScale(glm::vec3 scale) {
+inline glm::mat4 SetToMatScale(glm::vec3 scale) {
 	glm::mat4 mat = glm::mat4(1.f);
 	mat[0][0] = scale.x;
 	mat[1][1] = scale.y;
@@ -21,7 +21,7 @@ glm::mat4 SetToMatScale(glm::vec3 scale) {
 	return mat;
 }
 
-glm::mat4 SetToMatRotationX(float x) {
+inline glm::mat4 SetToMatRotationX(float x) {
 	glm::mat4 mat = glm::mat4(1.f);
 	mat[1][1] = cos(x);
 	mat[1][2] = sin(x);
@@ -31,7 +31,7 @@ glm::mat4 SetToMatRotationX(float x) {
 	return mat;
 }
 
-glm::mat4 SetToMatRotationY(float y) {
+inline glm::mat4 SetToMatRotationY(float y) {
 	glm::mat4 mat = glm::mat4(1.f);
 	mat[0][0] = cos(y);
 	mat[0][2] = -sin(y);
@@ -41,7 +41,7 @@ glm::mat4 SetToMatRotationY(float y) {
 	return mat;
 }
 
-glm::mat4 SetToMatRotationZ(float z) {
+inline glm::mat4 SetToMatRotationZ(float z) {
 	glm::mat4 mat = glm::mat4(1.f);
 	mat[0][0] = cos(z);
 	mat[1][0] = -sin(z);
@@ -51,27 +51,27 @@ glm::mat4 SetToMatRotationZ(float z) {
 	return mat;
 }
 
-glm::vec3 GetPosFromMat(glm::mat4 mat) {
+inline glm::vec3 GetPosFromMat(glm::mat4 mat) {
 	return glm::vec3(mat[3][0], mat[3][1], mat[3][2]);
 }
 
-glm::vec3 GetScaleFromMat(glm::mat4 mat) {
+inline glm::vec3 GetScaleFromMat(glm::mat4 mat) {
 	return glm::vec3(mat[0][0], mat[1][1], mat[2][2]);
 }
 
-glm::vec3 GetZDirFromMat(glm::mat4 mat) {
+inline glm::vec3 GetZDirFromMat(glm::mat4 mat) {
 	return glm::vec3(mat[2][0], mat[2][1], mat[2][2]);
 }
 
-glm::vec3 GetYDirFromMat(glm::mat4 mat) {
+inline glm::vec3 GetYDirFromMat(glm::mat4 mat) {
 	return glm::vec3(mat[1][0], mat[1][1], mat[1][2]);
 }
 
-glm::vec3 GetXDirFromMat(glm::mat4 mat) {
+inline glm::vec3 GetXDirFromMat(glm::mat4 mat) {
 	return glm::vec3(mat[0][0], mat[0][1], mat[0][2]);
 }
 
-glm::vec4 Cross(glm::vec4& v1, glm::vec4& v2, glm::vec4& v3)
+inline glm::vec4 Cross(glm::vec4& v1, glm::vec4& v2, glm::vec4& v3)
 {
 	glm::vec4 out;
 	out.x = v1.y * (v2.z * v3.w - v3.z * v2.w) - v1.z * (v2.y * v3.w - v3.y * v2.w) + v1.w * (v2.y * v3.z - v2.z * v3.y);
@@ -82,7 +82,7 @@ glm::vec4 Cross(glm::vec4& v1, glm::vec4& v2, glm::vec4& v3)
 	return out;
 }
 
-float GetDeterminant(glm::mat4 mat) {
+inline float GetDeterminant(glm::mat4 mat) {
 	glm::vec4 minor, v1, v2, v3;
 	float det;
 
@@ -96,7 +96,7 @@ float GetDeterminant(glm::mat4 mat) {
 	return det;
 }
 
-glm::mat4 Inverse(glm::mat4 mat) {
+inline glm::mat4 Inverse(glm::mat4 mat) {
 	int a, i, j;
 	glm::mat4 out;
 	glm::vec4 v, vec[3];

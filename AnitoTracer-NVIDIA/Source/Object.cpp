@@ -4,7 +4,7 @@
 #include "Math.h"
 
 Object::Object(std::string name, ObjectType type)
-	: name(name), type(type)
+	: name(name), type(type) 
 {
 	this->isActive = true;
 	this->isSelected = false;
