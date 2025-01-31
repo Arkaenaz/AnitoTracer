@@ -19,6 +19,22 @@
 
 #include "CameraManager.h"
 
+struct vec3
+{
+	float x, y, z;
+};
+
+struct vec4
+{
+	float x, y, z, w;
+};
+
+struct Vertex
+{
+	vec3 position;
+	vec4 color;
+};
+
 AppWindow::AppWindow(const UINT width, const UINT height,
                          const std::wstring name)
 	: Window(width, height, name)
@@ -178,21 +194,37 @@ void AppWindow::OnRender()
 	}
 	else
 	{
-		mpCmdList->SetGraphicsRootSignature(mpGraphicsRootSig.Get());
 		mpCmdList->SetPipelineState(mpGraphicsPipelineState.Get());
+		mpCmdList->SetGraphicsRootSignature(mpGraphicsRootSig.Get());
 
 		FLOAT clearColor[] = { 0.0f, 0.0f, 0.0f, 1 };
 
-		mpCmdList->OMSetRenderTargets(1, &mFrameObjects[rtvIndex].rtvHandle, FALSE, nullptr);
-		mpCmdList->ClearRenderTargetView(mFrameObjects[rtvIndex].rtvHandle, clearColor, 0, nullptr);
+		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+		mpCmdList->ClearRenderTargetView(mFrameObjects[rtvIndex].rtvHandle, clearColor, 0, nullptr);
+		mpCmdList->OMSetRenderTargets(1, &mFrameObjects[rtvIndex].rtvHandle, FALSE, nullptr);
 		mpCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+
+		const DirectXUtil::AccelerationStructures::ShapeResources* primitiveRes =
+			DirectXUtil::AccelerationStructures::createdPrimitive;
+
+		/*D3D12_INDEX_BUFFER_VIEW indexBufferView;
+		indexBufferView.BufferLocation = primitiveRes->indexBuffer->GetGPUVirtualAddress();
+		indexBufferView.SizeInBytes = primitiveRes->indexCount * sizeof(unsigned short);
+		indexBufferView.Format = DXGI_FORMAT_R16_UINT;*/
+
+		/*mFenceValue++;
+		mpCmdQueue->Signal(mpFence.Get(), mFenceValue);
+		mpFence->SetEventOnCompletion(mFenceValue, mFenceEvent);
+		WaitForSingleObject(mFenceEvent, INFINITE);*/
+
+		//mpCmdList->IASetIndexBuffer(&indexBufferView);
+		mpCmdList->IASetVertexBuffers(0, 1, &mVertexBufferView);
+		mpCmdList->DrawInstanced(3, 1, 0, 0);
+
 		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-		/*D3D12_VERTEX_BUFFER_VIEW vertexBufferView = this->vertexBuffer->getVertexBufferView();
-		mpCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
-		mpCmdList->DrawInstanced(3, 1, 0, 0);*/
 	}
 	EndFrame(rtvIndex);
 }
@@ -566,6 +598,26 @@ void AppWindow::createGraphicsPipelineState()
 	graphicsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	NV_D3D_CALL(mpDevice->CreateGraphicsPipelineState(&graphicsDesc, IID_PPV_ARGS(&mpGraphicsPipelineState)));
+
+	Vertex triangleVertices[] =
+	{
+		{ { 0.0f, 0.25f * (GetWidth() / GetHeight()), 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+		{ { 0.25f, -0.25f * (GetWidth() / GetHeight()), 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+		{ { -0.25f, -0.25f * (GetWidth() / GetHeight()), 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+	};
+
+	mpVertexBuffer = DirectXUtil::AccelerationStructures::createBuffer(mpDevice, sizeof(triangleVertices), 
+		D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ, DirectXUtil::AccelerationStructures::kUploadHeapProps);
+
+	uint8_t* vBuffData;
+	mpVertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&vBuffData));
+	memcpy(vBuffData, &triangleVertices,
+		static_cast<unsigned int>(sizeof(triangleVertices)));
+	mpVertexBuffer->Unmap(0, nullptr);
+
+	mVertexBufferView.BufferLocation = mpVertexBuffer->GetGPUVirtualAddress();
+	mVertexBufferView.SizeInBytes = sizeof(triangleVertices);
+	mVertexBufferView.StrideInBytes = sizeof(Vertex);
 
 	if (vertexBlob)
 		vertexBlob->Release();

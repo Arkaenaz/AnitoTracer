@@ -85,5 +85,7 @@ private:
 	void createGraphicsPipelineState();
 	SampleFramework::ID3D12RootSignaturePtr mpGraphicsRootSig;
 	SampleFramework::ID3D12PipelineStatePtr mpGraphicsPipelineState;
+	SampleFramework::ID3D12ResourcePtr mpVertexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW mVertexBufferView;
 
 };
