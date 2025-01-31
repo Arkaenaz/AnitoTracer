@@ -15,6 +15,8 @@
 #include "Utils/Structs/ShaderConfig.h"
 #include "Utils/Structs/VertexPositionNormalTangentTexture.h"
 
+#include "CameraManager.h"
+
 AppWindow::AppWindow(const UINT width, const UINT height,
                          const std::wstring name)
 	: Window(width, height, name)
@@ -105,6 +107,8 @@ void AppWindow::OnInit()
 	createShaderResources();
 
 	createShaderTable();
+
+	CameraManager::Init();
 }
 
 void AppWindow::OnUpdate()
