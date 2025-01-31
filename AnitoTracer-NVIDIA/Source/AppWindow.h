@@ -80,7 +80,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE vertexSRVHandle;
 
 	// Graphics Pipeline
-	bool mIsRayTracing = false;
+	bool mIsRayTracing = true;
 
 	void createGraphicsPipelineState();
 	SampleFramework::ID3D12RootSignaturePtr mpGraphicsRootSig;
