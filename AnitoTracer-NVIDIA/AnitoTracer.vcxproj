@@ -58,15 +58,16 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir);$(ProjectDir)libs\assimp\include</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxcompiler.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>$(ProjectDir)libs\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <TreatOutputAsContent>true</TreatOutputAsContent>
@@ -125,6 +126,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ModelImporter.h" />
     <ClInclude Include="Source\Primitive\Quad.h" />
     <ClInclude Include="Source\Primitive\Cube.h" />
     <ClInclude Include="Source\LightObject.h" />
@@ -169,6 +171,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ModelImporter.cpp" />
     <ClCompile Include="Source\Primitive\Quad.cpp" />
     <ClCompile Include="Source\Primitive\Cube.cpp" />
     <ClCompile Include="Source\LightObject.cpp" />

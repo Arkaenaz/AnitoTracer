@@ -25,6 +25,9 @@
     <Filter Include="Manager">
       <UniqueIdentifier>{9fab9b58-1552-43f9-ac72-7da752b14d73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Model">
+      <UniqueIdentifier>{04c07a4c-2581-4dda-9ec2-bec33e71a9d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Dx12\InterfacePointers.h">
@@ -112,6 +115,9 @@
     <ClInclude Include="Source\Primitive\Sphere.h" />
     <ClInclude Include="Source\Primitive\Cube.h" />
     <ClInclude Include="Source\Primitive\Quad.h" />
+    <ClInclude Include="ModelImporter.h">
+      <Filter>Object\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Shaders.hlsl">
@@ -163,5 +169,8 @@
     <ClCompile Include="Source\Primitive\Sphere.cpp" />
     <ClCompile Include="Source\Primitive\Cube.cpp" />
     <ClCompile Include="Source\Primitive\Quad.cpp" />
+    <ClCompile Include="ModelImporter.cpp">
+      <Filter>Object\Model</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
