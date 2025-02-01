@@ -70,7 +70,7 @@ DirectXUtil::AccelerationStructures::ShapeResources* DirectXUtil::AccelerationSt
 	switch (type)
 	{
 	case SPHERE:
-		shape = DirectXUtil::Primitives::createSphere(2.0f, 32, false, false, glm::vec3(0,1,0));
+		shape = DirectXUtil::Primitives::createSphere(2.0f, 32, false, false, glm::vec3(0,0,0));
 		break;
 	case CUBE:
 		shape = DirectXUtil::Primitives::createCube(1.5f);
@@ -204,7 +204,7 @@ DirectXUtil::Structs::AccelerationStructureBuffers DirectXUtil::AccelerationStru
 	}
 
 	//Create the primitive
-	createdPrimitive = createPrimitive(pDevice, PrimitiveType::SPHERE);
+	createdPrimitive = createPrimitive(pDevice, PrimitiveType::CUBE);
 
 	if (!createdPrimitive)
 	{
@@ -222,7 +222,7 @@ void DirectXUtil::AccelerationStructures::buildTopLevelAS(SampleFramework::ID3D1
                                                           uint64_t& tlasSize,
                                                           DirectXUtil::Structs::AccelerationStructureBuffers& buffers)
 {
-	static const int instances = 2;
+	static const int instances = 5;
 
 	// First, get the size of the TLAS buffers and create them
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
@@ -264,21 +264,25 @@ void DirectXUtil::AccelerationStructures::buildTopLevelAS(SampleFramework::ID3D1
 
 	// The transformation matrices for the instances
 	glm::mat4 transformation[instances];
-	transformation[0] = translate(glm::mat4(1.0f), glm::vec3(0, -1.0f, 0));
-	transformation[1] = glm::mat4(1.0f);
+	transformation[0] = translate(glm::mat4(0.65f), glm::vec3(0, -1.0f, 0.0f));
+	transformation[1] = translate(glm::mat4(0.55f), glm::vec3(3.0f, 0.0f, 0));
+	transformation[2] = translate(glm::mat4(0.45f), glm::vec3(-3.0f, 0.0f, 0));
+	transformation[3] = translate(glm::mat4(0.35f), glm::vec3(0, 3.0f, 0));
+	transformation[4] = translate(glm::mat4(0.25f), glm::vec3(2.0f, 0.0f, -2.0f));
 
-	instanceDescs[0].InstanceID = 0; // This value will be exposed to the shader via InstanceID()
-	instanceDescs[0].InstanceContributionToHitGroupIndex = 0;
-	// This is the offset inside the shader-table. We only have a single geometry, so the offset 0
-	instanceDescs[0].Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
-	glm::mat3x4 mat = glm::mat3x4(glm::transpose(transformation[0]));
-	memcpy(instanceDescs[0].Transform, &mat, sizeof(instanceDescs[0].Transform));
-	instanceDescs[0].AccelerationStructure = pBottomLevelAS[0].pResult->GetGPUVirtualAddress();
-	instanceDescs[0].InstanceMask = 0xFF;
+	//instanceDescs[0].InstanceID = 0; // This value will be exposed to the shader via InstanceID()
+	//instanceDescs[0].InstanceContributionToHitGroupIndex = 0;
+	//// This is the offset inside the shader-table. We only have a single geometry, so the offset 0
+	//instanceDescs[0].Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
+	//glm::mat3x4 mat = glm::mat3x4(glm::transpose(transformation[0]));
+	//memcpy(instanceDescs[0].Transform, &mat, sizeof(instanceDescs[0].Transform));
+	//instanceDescs[0].AccelerationStructure = pBottomLevelAS[0].pResult->GetGPUVirtualAddress();
+	//instanceDescs[0].InstanceMask = 0xFF;
 
-	for (int i = 1; i < instances; i++)
+	glm::mat3x4 mat;
+	for (int i = 0; i < instances; i++)
 	{
-		instanceDescs[i].InstanceID = i;
+		instanceDescs[i].InstanceID = i; // This value will be exposed to the shader via InstanceID()
 		instanceDescs[i].InstanceContributionToHitGroupIndex = 0;
 		instanceDescs[i].Flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
 		mat = glm::mat3x4(glm::transpose(transformation[i]));

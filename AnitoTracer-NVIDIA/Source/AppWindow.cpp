@@ -299,17 +299,23 @@ SampleFramework::ID3D12RootSignaturePtr AppWindow::createRootSignature(
 
 void AppWindow::createAccelerationStructures()
 {
-	//Create the two bottom level AS
+	//Create the bottom level AS
 	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPlaneBottomLevelAS(
 		mpDevice,
 		mpCmdList));
 	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPrimitiveBottomLevelAS(
 		mpDevice,
 		mpCmdList));
-
 	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPrimitiveBottomLevelAS(
 		mpDevice,
 		mpCmdList));
+	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPrimitiveBottomLevelAS(
+		mpDevice,
+		mpCmdList));
+	mpBottomLevelAS.push_back(DirectXUtil::AccelerationStructures::createPrimitiveBottomLevelAS(
+		mpDevice,
+		mpCmdList));
+
 
 	// Create the TLAS
 	DirectXUtil::AccelerationStructures::buildTopLevelAS(
