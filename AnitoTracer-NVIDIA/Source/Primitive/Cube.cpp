@@ -113,25 +113,25 @@ DirectXUtil::Primitive::Shape Cube::createCube(float size, bool uvHorizontalFlip
 			texCoord[j + 3]
 		);
 
-		// Other
+		// this should be temporary
 		returnCubeInfo.otherVertexData.emplace_back(
 			(normal - side1 - side2) * sideOverTwo,
-			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+			glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
 		);
 
 		returnCubeInfo.otherVertexData.emplace_back(
 			(normal - side1 + side2) * sideOverTwo,
-			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+			glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
 		);
 
 		returnCubeInfo.otherVertexData.emplace_back(
 			(normal + side1 + side2) * sideOverTwo,
-			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+			glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
 		);
 
 		returnCubeInfo.otherVertexData.emplace_back(
 			(normal + side1 - side2) * sideOverTwo,
-			glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+			glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)
 		);
 	}
 

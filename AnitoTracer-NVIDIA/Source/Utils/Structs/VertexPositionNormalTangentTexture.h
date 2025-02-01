@@ -28,6 +28,7 @@ namespace DirectXUtil
 			VertexPositionNormalTangentTexture() = default;
 		};
 
+		// this should be temporary
 		struct VertexPositionColor
 		{
 			glm::vec3 position;

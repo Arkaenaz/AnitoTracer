@@ -26,6 +26,8 @@ namespace DirectXUtil
 			//Vertex
 			SampleFramework::ID3D12ResourcePtr vertexBuffer;
 			unsigned int vertexCount;
+			SampleFramework::ID3D12ResourcePtr otherVertexBuffer;
+			unsigned int otherVertexCount;
 			//Index
 			SampleFramework::ID3D12ResourcePtr indexBuffer;
 			unsigned int indexCount;

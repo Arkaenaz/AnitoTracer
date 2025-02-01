@@ -110,6 +110,22 @@ DirectXUtil::AccelerationStructures::ShapeResources* DirectXUtil::AccelerationSt
 	       static_cast<unsigned int>(sizeof(Structs::VertexPositionNormalTangentTexture) * shape.vertexData.size()));
 	primitiveData->vertexBuffer->Unmap(0, nullptr);
 
+	// other vertex buffer
+	primitiveData->otherVertexCount = static_cast<unsigned int>(shape.otherVertexData.size());
+	primitiveData->otherVertexBuffer = createBuffer(
+		pDevice,
+		static_cast<unsigned int>(sizeof(Structs::VertexPositionColor) * shape.otherVertexData.size()),
+		D3D12_RESOURCE_FLAG_NONE,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		kUploadHeapProps
+	);
+
+	uint8_t* ovBuffData;
+	primitiveData->otherVertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&ovBuffData));
+	memcpy(ovBuffData, shape.otherVertexData.data(),
+		static_cast<unsigned int>(sizeof(Structs::VertexPositionColor) * shape.otherVertexData.size()));
+	primitiveData->otherVertexBuffer->Unmap(0, nullptr);
+
 	//Index
 	primitiveData->indexCount = static_cast<unsigned int>(shape.indexData.size());
 	primitiveData->indexBuffer = createBuffer(
