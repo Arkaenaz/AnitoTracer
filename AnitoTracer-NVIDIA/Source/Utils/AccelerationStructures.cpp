@@ -2,9 +2,12 @@
 
 #include <vector>
 
-#include "Primitives.h"
+#include "Source/Primitive/Primitive.h"
 #include "../../_externals/glm/glm/gtx/euler_angles.hpp"
 #include "Source/Helper.h"
+#include "Source/Primitive/Cube.h"
+#include "Source/Primitive/Quad.h"
+#include "Source/Primitive/Sphere.h"
 
 //Init static instance reference
 
@@ -65,19 +68,29 @@ SampleFramework::ID3D12ResourcePtr DirectXUtil::AccelerationStructures::createBu
 DirectXUtil::AccelerationStructures::ShapeResources* DirectXUtil::AccelerationStructures::createPrimitive(
 	SampleFramework::ID3D12Device5Ptr pDevice, const PrimitiveType type)
 {
-	DirectXUtil::Primitives::Shape shape;
+	DirectXUtil::Primitive primitive;
+	DirectXUtil::Primitive::Shape shape;
 
 	switch (type)
 	{
 	case SPHERE:
-		shape = DirectXUtil::Primitives::createSphere(2.0f, 32, false, false, glm::vec3(0,0,0));
-		break;
+		{
+			Sphere sphere;
+			shape = sphere.createSphere(2.0f, 32, false, false);
+			break;
+		}
 	case CUBE:
-		shape = DirectXUtil::Primitives::createCube(1.5f);
-		break;
+		{
+			Cube cube;
+			shape = cube.createCube(1.5f);
+			break;
+		}
 	case QUAD:
-		shape = DirectXUtil::Primitives::createQuad(100);
-		break;
+		{
+			Quad quad;
+			shape = quad.createQuad(100);
+			break;
+		}
 	}
 
 	ShapeResources* primitiveData = new ShapeResources;

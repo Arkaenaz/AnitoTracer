@@ -125,6 +125,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Primitive\Quad.h" />
+    <ClInclude Include="Source\Primitive\Cube.h" />
     <ClInclude Include="Source\LightObject.h" />
     <ClInclude Include="Source\CameraManager.h" />
     <ClInclude Include="Source\AppWindow.h" />
@@ -139,7 +141,7 @@
     <ClInclude Include="Source\Utils.h" />
     <ClInclude Include="Source\Utils\AccelerationStructures.h" />
     <ClInclude Include="Source\Utils\D3D12GraphicsContext.h" />
-    <ClInclude Include="Source\Utils\Primitives.h" />
+    <ClInclude Include="Source\Primitive\Primitive.h" />
     <ClInclude Include="Source\Utils\RTPipeline.h" />
     <ClInclude Include="Source\Utils\Structs\AccelerationStructureBuffers.h" />
     <ClInclude Include="Source\Utils\Structs\DxilLibrary.h" />
@@ -153,6 +155,7 @@
     <ClInclude Include="Source\Utils\Structs\ShaderConfig.h" />
     <ClInclude Include="Source\Utils\Structs\VertexPositionNormalTangentTexture.h" />
     <ClInclude Include="Source\Win32Application.h" />
+    <ClInclude Include="Source\Primitive\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Helpers.hlsli">
@@ -166,6 +169,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Primitive\Quad.cpp" />
+    <ClCompile Include="Source\Primitive\Cube.cpp" />
     <ClCompile Include="Source\LightObject.cpp" />
     <ClCompile Include="Source\CameraManager.cpp" />
     <ClCompile Include="Source\Utils\GraphicsPipeline.cpp" />
@@ -177,9 +182,10 @@
     <ClCompile Include="Source\Utils.cpp" />
     <ClCompile Include="Source\Utils\AccelerationStructures.cpp" />
     <ClCompile Include="Source\Utils\D3D12GraphicsContext.cpp" />
-    <ClCompile Include="Source\Utils\Primitives.cpp" />
+    <ClCompile Include="Source\Primitive\Primitive.cpp" />
     <ClCompile Include="Source\Utils\RTPipeline.cpp" />
     <ClCompile Include="Source\Win32Application.cpp" />
+    <ClCompile Include="Source\Primitive\Sphere.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

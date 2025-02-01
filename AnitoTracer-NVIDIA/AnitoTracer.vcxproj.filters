@@ -72,9 +72,6 @@
     <ClInclude Include="Source\Utils\Structs\VertexPositionNormalTangentTexture.h">
       <Filter>Utils\Structs</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Utils\Primitives.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Utils\GraphicsPipeline.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -111,6 +108,10 @@
     <ClInclude Include="Source\CameraManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Primitive\Primitive.h" />
+    <ClInclude Include="Source\Primitive\Sphere.h" />
+    <ClInclude Include="Source\Primitive\Cube.h" />
+    <ClInclude Include="Source\Primitive\Quad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Shaders.hlsl">
@@ -128,9 +129,6 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utils\GraphicsPipeline.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utils\Primitives.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utils\RTPipeline.cpp">
@@ -161,5 +159,9 @@
     <ClCompile Include="Source\CameraManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Primitive\Primitive.cpp" />
+    <ClCompile Include="Source\Primitive\Sphere.cpp" />
+    <ClCompile Include="Source\Primitive\Cube.cpp" />
+    <ClCompile Include="Source\Primitive\Quad.cpp" />
   </ItemGroup>
 </Project>
