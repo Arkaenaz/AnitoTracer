@@ -196,6 +196,20 @@ void AppWindow::OnRender()
 	{
 		mpCmdList->SetPipelineState(mpGraphicsPipelineState.Get());
 		mpCmdList->SetGraphicsRootSignature(mpGraphicsRootSig.Get());
+		D3D12_VIEWPORT vp = {};
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		vp.Width = GetWidth();
+		vp.Height = GetHeight();
+		vp.MinDepth = D3D12_MIN_DEPTH;
+		vp.MaxDepth = D3D12_MAX_DEPTH;
+		mpCmdList->RSSetViewports(1, &vp);
+
+		RECT scRect;
+		scRect.left = scRect.top = 0l;
+		scRect.right = static_cast<LONG>(GetWidth());
+		scRect.bottom = static_cast<LONG>(GetHeight());
+		mpCmdList->RSSetScissorRects(1, &scRect);
 
 		FLOAT clearColor[] = { 0.0f, 0.0f, 0.0f, 1 };
 
@@ -210,19 +224,24 @@ void AppWindow::OnRender()
 		const DirectXUtil::AccelerationStructures::ShapeResources* primitiveRes =
 			DirectXUtil::AccelerationStructures::createdPrimitive;
 
-		/*D3D12_INDEX_BUFFER_VIEW indexBufferView;
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+		vertexBufferView.BufferLocation = primitiveRes->otherVertexBuffer->GetGPUVirtualAddress();
+		vertexBufferView.SizeInBytes = primitiveRes->otherVertexCount * sizeof(DirectXUtil::Structs::VertexPositionColor);
+		vertexBufferView.StrideInBytes = sizeof(DirectXUtil::Structs::VertexPositionColor);
+
+		D3D12_INDEX_BUFFER_VIEW indexBufferView;
 		indexBufferView.BufferLocation = primitiveRes->indexBuffer->GetGPUVirtualAddress();
 		indexBufferView.SizeInBytes = primitiveRes->indexCount * sizeof(unsigned short);
-		indexBufferView.Format = DXGI_FORMAT_R16_UINT;*/
+		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
 		/*mFenceValue++;
 		mpCmdQueue->Signal(mpFence.Get(), mFenceValue);
 		mpFence->SetEventOnCompletion(mFenceValue, mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);*/
 
-		//mpCmdList->IASetIndexBuffer(&indexBufferView);
-		mpCmdList->IASetVertexBuffers(0, 1, &mVertexBufferView);
-		mpCmdList->DrawInstanced(3, 1, 0, 0);
+		mpCmdList->IASetIndexBuffer(&indexBufferView);
+		mpCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
+		mpCmdList->DrawIndexedInstanced(primitiveRes->indexCount, 1, 0, 0, 0);
 
 		DirectXUtil::D3D12GraphicsContext::resourceBarrier(mpCmdList, mFrameObjects[rtvIndex].pSwapChainBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	}
@@ -582,7 +601,7 @@ void AppWindow::createGraphicsPipelineState()
 	ID3DBlob* pixelBlob = nullptr;
 
 	D3D12_SHADER_BYTECODE vertexShaderByteCode = DirectXUtil::GraphicsPipeline::compileVertexShader(fullPath.c_str(), "VSMain", vertexBlob);
-	D3D12_SHADER_BYTECODE pixelShaderByteCode = DirectXUtil::GraphicsPipeline::compileVertexShader(fullPath.c_str(), "PSMain", pixelBlob);
+	D3D12_SHADER_BYTECODE pixelShaderByteCode = DirectXUtil::GraphicsPipeline::compilePixelShader(fullPath.c_str(), "PSMain", pixelBlob);
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsDesc = {};
 	graphicsDesc.pRootSignature = mpGraphicsRootSig.Get();
@@ -601,7 +620,7 @@ void AppWindow::createGraphicsPipelineState()
 	graphicsDesc.DepthStencilState.StencilEnable = FALSE;
 	graphicsDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	graphicsDesc.NumRenderTargets = 1;
-	graphicsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	graphicsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 	NV_D3D_CALL(mpDevice->CreateGraphicsPipelineState(&graphicsDesc, IID_PPV_ARGS(&mpGraphicsPipelineState)));
 

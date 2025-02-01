@@ -37,6 +37,20 @@ DirectXUtil::Primitive::Shape Quad::createQuad(int size, bool uvHorizontalFlip, 
 																 glm::vec2(0)),
 	};
 
+	// this should be temporary
+	returnQuadInfo.otherVertexData =
+	{
+		// Indexed Quad
+		DirectXUtil::Structs::VertexPositionColor(glm::vec3(-size, 0, -size),
+												  glm::vec4(1, 0, 0, 1)),
+		DirectXUtil::Structs::VertexPositionColor(glm::vec3(size, 0, -size),
+												  glm::vec4(0, 1, 0, 1)),
+		DirectXUtil::Structs::VertexPositionColor(glm::vec3(size, 0, size),
+												  glm::vec4(0, 0, 1, 1)),
+		DirectXUtil::Structs::VertexPositionColor(glm::vec3(-size, 0, size),
+												  glm::vec4(1, 1, 0, 1)),
+	};
+
 	returnQuadInfo.indexData = { 0, 1, 2, 0, 2, 3 };
 
 	return returnQuadInfo;

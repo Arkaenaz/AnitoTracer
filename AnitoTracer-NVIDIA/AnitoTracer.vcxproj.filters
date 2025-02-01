@@ -25,6 +25,9 @@
     <Filter Include="Manager">
       <UniqueIdentifier>{9fab9b58-1552-43f9-ac72-7da752b14d73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Primitives">
+      <UniqueIdentifier>{90bff41c-dc96-4458-9959-6ca726a84c89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Dx12\InterfacePointers.h">
@@ -108,10 +111,18 @@
     <ClInclude Include="Source\CameraManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Primitive\Primitive.h" />
-    <ClInclude Include="Source\Primitive\Sphere.h" />
-    <ClInclude Include="Source\Primitive\Cube.h" />
-    <ClInclude Include="Source\Primitive\Quad.h" />
+    <ClInclude Include="Source\Primitive\Sphere.h">
+      <Filter>Object\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Primitive\Quad.h">
+      <Filter>Object\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Primitive\Primitive.h">
+      <Filter>Object\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Primitive\Cube.h">
+      <Filter>Object\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Shaders.hlsl">
@@ -159,9 +170,17 @@
     <ClCompile Include="Source\CameraManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Primitive\Primitive.cpp" />
-    <ClCompile Include="Source\Primitive\Sphere.cpp" />
-    <ClCompile Include="Source\Primitive\Cube.cpp" />
-    <ClCompile Include="Source\Primitive\Quad.cpp" />
+    <ClCompile Include="Source\Primitive\Quad.cpp">
+      <Filter>Object\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitive\Sphere.cpp">
+      <Filter>Object\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitive\Primitive.cpp">
+      <Filter>Object\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primitive\Cube.cpp">
+      <Filter>Object\Primitives</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
